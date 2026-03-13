@@ -6,7 +6,7 @@ import type { Profile } from "@/lib/profile";
 const TABLE = "portfolio_profiles";
 
 async function readPublicProfileFromSupabase(): Promise<Profile | null> {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from(TABLE)
     .select("data")
@@ -25,7 +25,7 @@ async function readPublicProfileFromSupabase(): Promise<Profile | null> {
 }
 
 async function readProfileFromSupabase(userId: string): Promise<Profile | null> {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from(TABLE)
     .select("data")
@@ -42,7 +42,7 @@ async function readProfileFromSupabase(userId: string): Promise<Profile | null> 
 }
 
 async function writeProfileToSupabase(userId: string, profile: Profile) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from(TABLE).upsert(
     {
       user_id: userId,

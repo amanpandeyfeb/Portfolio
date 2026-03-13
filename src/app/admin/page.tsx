@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
   if (hasSupabaseEnv()) {
-    const supabase = createSupabaseServerClient();
+    const supabase = await createSupabaseServerClient();
     await supabase.auth.getUser();
   }
 

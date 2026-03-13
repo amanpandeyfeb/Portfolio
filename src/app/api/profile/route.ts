@@ -8,7 +8,7 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN ?? "";
 
 async function requireUserOrToken(request: Request) {
   if (hasSupabaseEnv()) {
-    const supabase = createSupabaseServerClient();
+    const supabase = await createSupabaseServerClient();
     const { data } = await supabase.auth.getUser();
     if (!data.user) return null;
     return { userId: data.user.id };
