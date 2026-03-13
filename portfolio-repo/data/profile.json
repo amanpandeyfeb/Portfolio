@@ -1,0 +1,48 @@
+{
+  "name": "Aman Pandey",
+  "role": "Full-Stack Developer",
+  "location": "Bangalore",
+  "email": "amanpandeyfeb2000@example.com",
+  "phone": "+1 555 123 4567",
+  "website": "https://your-website.com",
+  "summary": "Short intro about your work, what you love building, and the impact you aim for.",
+  "skills": [
+    "React",
+    "Next.js",
+    "TypeScript",
+    "Node.js",
+    "PostgreSQL"
+  ],
+  "experience": [
+    {
+      "company": "Company A",
+      "title": "Software Engineer",
+      "start": "2023",
+      "end": "Present",
+      "bullets": [
+        "Built a scalable dashboard used by 10k+ users",
+        "Led performance improvements that reduced load time by 45%"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Project One",
+      "link": "https://github.com/yourname/project-one",
+      "description": "A brief description of what the project does and why it matters.",
+      "stack": [
+        "Next.js",
+        "Tailwind",
+        "Supabase"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "school": "University Name",
+      "degree": "B.S. in Computer Science",
+      "year": "2022"
+    }
+  ],
+  "resumeText": ""
+}
