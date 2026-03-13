@@ -1,4 +1,6 @@
-﻿import type { Profile } from "@/lib/profile";
+﻿"use client";
+
+import type { Profile } from "@/lib/profile";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { useEffect, useMemo, useState } from "react";
