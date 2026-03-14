@@ -7,7 +7,10 @@ export async function createSupabaseServerClient() {
     throw new Error("Supabase environment variables are missing.");
   }
 
-  const cookieStore = await cookies();
+  const cookieStore = (await cookies()) as unknown as {
+    getAll: () => Array<{ name: string; value: string }>;
+    set: (name: string, value: string, options?: Record<string, unknown>) => void;
+  };
 
   return createServerClient(supabaseUrl, supabaseKey, {
     cookies: {
