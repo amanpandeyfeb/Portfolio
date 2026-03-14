@@ -2,6 +2,7 @@
 import { normalizeUsername } from "@/lib/username";
 import { resolveTheme } from "@/lib/themes";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,29 @@ export default async function ProfilePage({
   params: { username: string };
 }) {
   const slug = normalizeUsername(params.username);
-  const profile = await loadProfileByUsername(slug);
+  let profile = await loadProfileByUsername(slug);
+  if (!profile) {
+    const requestHeaders = await headers();
+    const host =
+      requestHeaders.get("x-forwarded-host") ??
+      requestHeaders.get("host") ??
+      "";
+    const proto = requestHeaders.get("x-forwarded-proto") ?? "https";
+    if (host) {
+      const response = await fetch(
+        `${proto}://${host}/api/public-profile?username=${encodeURIComponent(
+          slug
+        )}`,
+        { cache: "no-store" }
+      );
+      if (response.ok) {
+        const data = (await response.json()) as { profile?: typeof profile };
+        if (data?.profile) {
+          profile = data.profile;
+        }
+      }
+    }
+  }
   if (!profile) {
     notFound();
   }
