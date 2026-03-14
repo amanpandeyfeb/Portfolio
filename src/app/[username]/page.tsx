@@ -1,43 +1,110 @@
-﻿import { loadProfileByUsername } from "@/lib/profile-store";
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
 import { normalizeUsername } from "@/lib/username";
 import { resolveTheme } from "@/lib/themes";
-import { notFound } from "next/navigation";
-import { headers } from "next/headers";
+import type { Profile } from "@/lib/profile";
 
 export const dynamic = "force-dynamic";
 
-export default async function ProfilePage({
+type ProfileResponse = { profile?: Profile };
+
+export default function ProfilePage({
   params,
 }: {
   params: { username: string };
 }) {
-  const slug = normalizeUsername(params.username);
-  let profile = await loadProfileByUsername(slug);
-  if (!profile) {
-    const requestHeaders = await headers();
-    const host =
-      requestHeaders.get("x-forwarded-host") ??
-      requestHeaders.get("host") ??
-      "";
-    const proto = requestHeaders.get("x-forwarded-proto") ?? "https";
-    if (host) {
-      const response = await fetch(
-        `${proto}://${host}/api/public-profile?username=${encodeURIComponent(
-          slug
-        )}`,
-        { cache: "no-store" }
-      );
-      if (response.ok) {
-        const data = (await response.json()) as { profile?: typeof profile };
-        if (data?.profile) {
-          profile = data.profile;
+  const slug = useMemo(() => normalizeUsername(params.username), [params.username]);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const load = async () => {
+      if (!slug) {
+        setError("Username is missing.");
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(
+          `/api/public-profile?username=${encodeURIComponent(slug)}`,
+          { cache: "no-store" }
+        );
+
+        if (!response.ok) {
+          setError("Profile not found.");
+          setProfile(null);
+          setLoading(false);
+          return;
+        }
+
+        const data = (await response.json()) as ProfileResponse;
+        if (!cancelled) {
+          setProfile(data.profile ?? null);
+          setLoading(false);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError("Unable to load profile.");
+          setProfile(null);
+          setLoading(false);
         }
       }
-    }
+    };
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff4e4,_#f8f2e9_55%,_#efe2d0_100%)]">
+        <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-16">
+          <h1 className="display-font text-3xl text-[#1f1b16]">Loading profile...</h1>
+          <p className="text-sm text-[#6b5f54]">
+            Fetching your public portfolio. Please wait.
+          </p>
+        </main>
+      </div>
+    );
   }
-  if (!profile) {
-    notFound();
+
+  if (!profile || error) {
+    return (
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff4e4,_#f8f2e9_55%,_#efe2d0_100%)]">
+        <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-16">
+          <h1 className="display-font text-3xl text-[#1f1b16]">Profile not found</h1>
+          <p className="text-sm text-[#6b5f54]">
+            {error ?? "We could not find this portfolio yet."}
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a
+              className="rounded-full bg-[#2f6b73] px-5 py-2 text-sm font-semibold text-white"
+              href="/signup"
+            >
+              Create a username
+            </a>
+            <a
+              className="rounded-full border border-[#eadfce] px-5 py-2 text-sm font-semibold text-[#1f1b16]"
+              href="/"
+            >
+              Back home
+            </a>
+          </div>
+        </main>
+      </div>
+    );
   }
+
   const resumeSnippet = profile.resumeText
     ? `${profile.resumeText.slice(0, 600)}${
         profile.resumeText.length > 600 ? "..." : ""
@@ -211,7 +278,7 @@ export default async function ProfilePage({
                   {project.description}
                 </p>
                 <p className="mt-3 text-xs uppercase tracking-[0.2em] text-[color:var(--accent-2)]">
-                  {project.stack.join(" · ")}
+                  {project.stack.join(" � ")}
                 </p>
                 {project.link ? (
                   <a
@@ -231,6 +298,3 @@ export default async function ProfilePage({
     </div>
   );
 }
-
-
-
