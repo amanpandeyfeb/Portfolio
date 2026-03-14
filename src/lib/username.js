@@ -11,7 +11,8 @@ const RESERVED_USERNAMES = new Set([
 ]);
 
 function normalizeUsername(raw) {
-  return raw.trim().toLowerCase();
+  const safe = typeof raw === "string" ? raw : "";
+  return safe.trim().toLowerCase();
 }
 
 function isValidUsername(raw) {
