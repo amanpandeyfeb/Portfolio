@@ -46,13 +46,24 @@ export async function POST(request: Request) {
     );
   }
 
-  const mod = (await import("pdf-parse")) as unknown as {
-    default?: (data: Buffer) => Promise<{ text?: string }>;
-  };
-  const pdfParse =
-    mod.default ?? (mod as unknown as (data: Buffer) => Promise<{ text?: string }>);
-  const parsed = await pdfParse(Buffer.from(arrayBuffer));
-  const text = parsed.text?.trim() ?? "";
+  let text = "";
+  try {
+    const mod = (await import("pdf-parse")) as unknown as {
+      default?: (data: Buffer) => Promise<{ text?: string }>;
+    };
+    const pdfParse =
+      mod.default ??
+      (mod as unknown as (data: Buffer) => Promise<{ text?: string }>);
+    const parsed = await pdfParse(Buffer.from(arrayBuffer));
+    text = parsed.text?.trim() ?? "";
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Unable to parse PDF.";
+    return NextResponse.json(
+      { error: "Resume parsing failed.", detail: message },
+      { status: 400 }
+    );
+  }
 
   const record = await loadProfileForUser(userId);
   const baseProfile = {
