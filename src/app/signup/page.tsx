@@ -109,8 +109,14 @@ export default function SignupPage() {
     }
 
     if (!data.session) {
-      setStatus("Account created. Please sign in.");
-      return;
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (signInError) {
+        setStatus("Account created. Please sign in to continue.");
+        return;
+      }
     }
 
     const claimRes = await fetch("/api/profile/claim", {
