@@ -421,7 +421,48 @@ export default function AdminClient({ username }: { username: string }) {
               Need an account? Create one at /signup.
             </p>
           </section>
-        ) : !isOwner && profileLoaded ? null : null}
+        ) : !signedIn ? (
+          <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-[#f1c7b8] bg-[#fff2ec] p-4 text-sm text-[#8b4f3c]">
+              Not for you. Be the owner of this username.
+            </div>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <input
+                className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                type="email"
+                placeholder="you@email.com"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
+              <input
+                className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+            </div>
+            <button
+              className="mt-4 rounded-full bg-[#2f6b73] px-4 py-2 text-sm font-semibold text-white"
+              onClick={handleSignIn}
+            >
+              Sign in
+            </button>
+            {authStatus ? (
+              <p className="text-sm text-[#6b5f54]">{authStatus}</p>
+            ) : null}
+            <p className="text-xs text-[#6b5f54]">
+              Need an account? Create one at /signup.
+            </p>
+          </section>
+        ) : !isOwner && profileLoaded ? (
+          <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-[#f1c7b8] bg-[#fff2ec] p-4 text-sm text-[#8b4f3c]">
+              You&apos;re signed in, but this username belongs to a different
+              account. Please sign in with the correct email for {username}.
+            </div>
+          </section>
+        ) : null}
 
         {signedIn && isOwner ? (
           <>
