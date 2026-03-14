@@ -137,17 +137,7 @@ export default function ProfilePage() {
                 >
                   {profile.email}
                 </a>
-                {profile.resumeUrl ? (
-                  <a
-                    className="rounded-full border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2 font-semibold text-[color:var(--accent)]"
-                    href={profile.resumeUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    download
-                  >
-                    📥 Download Resume
-                  </a>
-                ) : null}
+
                 {profile.website ? (
                   <a
                     className="rounded-full border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2"
