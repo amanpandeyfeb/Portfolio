@@ -225,6 +225,12 @@ export default function AdminClient({ username }: { username: string }) {
       if (data.username && data.username !== username) {
         setIsOwner(false);
         setUsernameMismatch(true);
+        const supabase = createSupabaseBrowserClient();
+        await supabase.auth.signOut();
+        setSignedIn(false);
+        setAuthStatus(
+          `You're signed in with a different account. Please sign in with the email used for ${username}.`
+        );
         return;
       }
 
@@ -242,7 +248,7 @@ export default function AdminClient({ username }: { username: string }) {
 
   useEffect(() => {
     if (signedIn && usernameMismatch && ownUsername) {
-      window.location.href = `/${ownUsername}/admin`;
+      return;
     }
   }, [signedIn, usernameMismatch, ownUsername]);
 
@@ -408,28 +414,7 @@ export default function AdminClient({ username }: { username: string }) {
               Need an account? Create one at /signup.
             </p>
           </section>
-        ) : !isOwner && profileLoaded ? (
-          <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
-            <div className="rounded-2xl border border-[#f1c7b8] bg-[#fff2ec] p-4 text-sm text-[#8b4f3c]">
-              You&apos;re signed in, but this username belongs to a different
-              account.
-            </div>
-            {ownUsername ? (
-              <a
-                className="mt-4 inline-flex items-center justify-center rounded-full border border-[#eadfce] px-4 py-2 text-sm font-semibold text-[#1f1b16]"
-                href={`/${ownUsername}/admin`}
-              >
-                Go to your admin page
-              </a>
-            ) : null}
-            <button
-              className="mt-4 rounded-full bg-[#2f6b73] px-4 py-2 text-sm font-semibold text-white"
-              onClick={handleSignOut}
-            >
-              Sign out
-            </button>
-          </section>
-        ) : (
+        ) : !isOwner && profileLoaded ? null : (
           <section className="grid gap-4 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
             <div className="flex flex-wrap items-center gap-4">
               <p className="text-sm text-[#6b5f54]">Signed in.</p>
