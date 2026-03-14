@@ -1,6 +1,7 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { normalizeUsername } from "@/lib/username";
 import { resolveTheme } from "@/lib/themes";
 import type { Profile } from "@/lib/profile";
@@ -9,13 +10,9 @@ export const dynamic = "force-dynamic";
 
 type ProfileResponse = { profile?: Profile };
 
-export default function ProfilePage({
-  params,
-}: {
-  params: Promise<{ username: string }> | { username: string };
-}) {
-  const resolvedParams = use(params);
-  const username = (resolvedParams as { username: string }).username;
+export default function ProfilePage() {
+  const params = useParams<{ username: string }>();
+  const username = params?.username ?? '';
   const slug = normalizeUsername(username);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
