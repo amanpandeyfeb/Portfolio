@@ -300,11 +300,11 @@ export default function AdminClient() {
             <p className="text-sm text-[#6b5f54]">Checking login...</p>
           </section>
         ) : !signedIn ? (
-          <section className="grid gap-4 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
-            <p className="text-sm text-[#6b5f54]">
-              Please sign in to edit your portfolio.
-            </p>
-            <div className="grid gap-4 md:grid-cols-[1fr_auto]">
+          <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-[#f1c7b8] bg-[#fff2ec] p-4 text-sm text-[#8b4f3c]">
+              Not for you. Be an admin.
+            </div>
+            <div className="mt-4 grid gap-4 md:grid-cols-[1fr_auto]">
               <input
                 className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
                 type="email"
