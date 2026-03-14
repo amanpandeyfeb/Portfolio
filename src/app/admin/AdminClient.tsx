@@ -338,196 +338,206 @@ export default function AdminClient() {
         )}
 
         {signedIn ? (
-          <section className="grid gap-6 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm md:grid-cols-2">
-          <div className="space-y-3">
-            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-              Name
-            </label>
-            <input
-              className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-              value={profile.name}
-              onChange={(event) =>
-                setProfile((prev) => ({ ...prev, name: event.target.value }))
-              }
-            />
-          </div>
-          <div className="space-y-3">
-            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-              Role
-            </label>
-            <input
-              className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-              value={profile.role}
-              onChange={(event) =>
-                setProfile((prev) => ({ ...prev, role: event.target.value }))
-              }
-            />
-          </div>
-          <div className="space-y-3">
-            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-              Location
-            </label>
-            <input
-              className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-              value={profile.location}
-              onChange={(event) =>
-                setProfile((prev) => ({ ...prev, location: event.target.value }))
-              }
-            />
-          </div>
-          <div className="space-y-3">
-            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-              Email
-            </label>
-            <input
-              className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-              value={profile.email}
-              onChange={(event) =>
-                setProfile((prev) => ({ ...prev, email: event.target.value }))
-              }
-            />
-          </div>
-          <div className="space-y-3">
-            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-              Phone
-            </label>
-            <input
-              className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-              value={profile.phone}
-              onChange={(event) =>
-                setProfile((prev) => ({ ...prev, phone: event.target.value }))
-              }
-            />
-          </div>
-          <div className="space-y-3">
-            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-              Website
-            </label>
-            <input
-              className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-              value={profile.website}
-              onChange={(event) =>
-                setProfile((prev) => ({ ...prev, website: event.target.value }))
-              }
-            />
-          </div>
-          <div className="space-y-3">
-            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-              GitHub
-            </label>
-            <input
-              className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-              value={profile.github}
-              onChange={(event) =>
-                setProfile((prev) => ({ ...prev, github: event.target.value }))
-              }
-            />
-          </div>
-          <div className="space-y-3">
-            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-              LinkedIn
-            </label>
-            <input
-              className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-              value={profile.linkedin}
-              onChange={(event) =>
-                setProfile((prev) => ({ ...prev, linkedin: event.target.value }))
-              }
-            />
-          </div>
-          <div className="space-y-3 md:col-span-2">
-            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-              Summary
-            </label>
-            <textarea
-              className="h-24 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-              value={profile.summary}
-              onChange={(event) =>
-                setProfile((prev) => ({ ...prev, summary: event.target.value }))
-              }
-            />
-          </div>
-        </section>
+          <>
+            <section className="grid gap-6 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm md:grid-cols-2">
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  Name
+                </label>
+                <input
+                  className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  value={profile.name}
+                  onChange={(event) =>
+                    setProfile((prev) => ({ ...prev, name: event.target.value }))
+                  }
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  Role
+                </label>
+                <input
+                  className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  value={profile.role}
+                  onChange={(event) =>
+                    setProfile((prev) => ({ ...prev, role: event.target.value }))
+                  }
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  Location
+                </label>
+                <input
+                  className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  value={profile.location}
+                  onChange={(event) =>
+                    setProfile((prev) => ({ ...prev, location: event.target.value }))
+                  }
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  Email
+                </label>
+                <input
+                  className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  value={profile.email}
+                  onChange={(event) =>
+                    setProfile((prev) => ({ ...prev, email: event.target.value }))
+                  }
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  Phone
+                </label>
+                <input
+                  className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  value={profile.phone}
+                  onChange={(event) =>
+                    setProfile((prev) => ({ ...prev, phone: event.target.value }))
+                  }
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  Website
+                </label>
+                <input
+                  className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  value={profile.website}
+                  onChange={(event) =>
+                    setProfile((prev) => ({ ...prev, website: event.target.value }))
+                  }
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  GitHub
+                </label>
+                <input
+                  className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  value={profile.github}
+                  onChange={(event) =>
+                    setProfile((prev) => ({ ...prev, github: event.target.value }))
+                  }
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  LinkedIn
+                </label>
+                <input
+                  className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  value={profile.linkedin}
+                  onChange={(event) =>
+                    setProfile((prev) => ({
+                      ...prev,
+                      linkedin: event.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="space-y-3 md:col-span-2">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  Summary
+                </label>
+                <textarea
+                  className="h-24 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  value={profile.summary}
+                  onChange={(event) =>
+                    setProfile((prev) => ({
+                      ...prev,
+                      summary: event.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </section>
 
-        <section className="grid gap-6 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
-          <div className="space-y-3">
-            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-              Skills (comma separated)
-            </label>
-            <textarea
-              className="h-20 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-              value={skillsText}
-              onChange={(event) => setSkillsText(event.target.value)}
-            />
-          </div>
-          <div className="space-y-3">
-            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-              Experience (company | title | start | end | bullet; bullet)
-            </label>
-            <textarea
-              className="h-32 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-              value={experienceText}
-              onChange={(event) => setExperienceText(event.target.value)}
-            />
-          </div>
-          <div className="space-y-3">
-            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-              Projects (name | link | stack, stack | description)
-            </label>
-            <textarea
-              className="h-32 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-              value={projectsText}
-              onChange={(event) => setProjectsText(event.target.value)}
-            />
-          </div>
-          <div className="space-y-3">
-            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-              Education (school | degree | year)
-            </label>
-            <textarea
-              className="h-24 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-              value={educationText}
-              onChange={(event) => setEducationText(event.target.value)}
-            />
-          </div>
-          <div className="flex items-center gap-4">
-            <button
-              className="rounded-full bg-[#2f6b73] px-5 py-2 text-sm font-semibold text-white"
-              onClick={handleSave}
-            >
-              Save portfolio data
-            </button>
-            {status ? <span className="text-sm text-[#6b5f54]">{status}</span> : null}
-          </div>
-        </section>
+            <section className="grid gap-6 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  Skills (comma separated)
+                </label>
+                <textarea
+                  className="h-20 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  value={skillsText}
+                  onChange={(event) => setSkillsText(event.target.value)}
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  Experience (company | title | start | end | bullet; bullet)
+                </label>
+                <textarea
+                  className="h-32 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  value={experienceText}
+                  onChange={(event) => setExperienceText(event.target.value)}
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  Projects (name | link | stack, stack | description)
+                </label>
+                <textarea
+                  className="h-32 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  value={projectsText}
+                  onChange={(event) => setProjectsText(event.target.value)}
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  Education (school | degree | year)
+                </label>
+                <textarea
+                  className="h-24 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  value={educationText}
+                  onChange={(event) => setEducationText(event.target.value)}
+                />
+              </div>
+              <div className="flex items-center gap-4">
+                <button
+                  className="rounded-full bg-[#2f6b73] px-5 py-2 text-sm font-semibold text-white"
+                  onClick={handleSave}
+                >
+                  Save portfolio data
+                </button>
+                {status ? (
+                  <span className="text-sm text-[#6b5f54]">{status}</span>
+                ) : null}
+              </div>
+            </section>
 
-        <section className="grid gap-6 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
-          <div className="space-y-3">
-            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-              Upload resume (PDF)
-            </label>
-            <input
-              className="w-full text-sm"
-              type="file"
-              accept="application/pdf"
-              onChange={(event) =>
-                setResumeFile(event.target.files ? event.target.files[0] : null)
-              }
-            />
-          </div>
-          <button
-            className="rounded-full bg-[#e9734f] px-5 py-2 text-sm font-semibold text-white"
-            onClick={handleUpload}
-          >
-            Scan resume
-          </button>
-          {uploadStatus ? (
-            <p className="text-sm text-[#6b5f54]">{uploadStatus}</p>
-          ) : null}
-          <div className="rounded-2xl border border-[#efe2d0] bg-[#fffaf3] p-4 text-sm text-[#6b5f54]">
-            {resumePreview}
-          </div>
-        </section>
+            <section className="grid gap-6 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  Upload resume (PDF)
+                </label>
+                <input
+                  className="w-full text-sm"
+                  type="file"
+                  accept="application/pdf"
+                  onChange={(event) =>
+                    setResumeFile(event.target.files ? event.target.files[0] : null)
+                  }
+                />
+              </div>
+              <button
+                className="rounded-full bg-[#e9734f] px-5 py-2 text-sm font-semibold text-white"
+                onClick={handleUpload}
+              >
+                Scan resume
+              </button>
+              {uploadStatus ? (
+                <p className="text-sm text-[#6b5f54]">{uploadStatus}</p>
+              ) : null}
+              <div className="rounded-2xl border border-[#efe2d0] bg-[#fffaf3] p-4 text-sm text-[#6b5f54]">
+                {resumePreview}
+              </div>
+            </section>
+          </>
         ) : null}
       </main>
     </div>
