@@ -1,5 +1,6 @@
-import { loadProfileByUsername } from "@/lib/profile-store";
+﻿import { loadProfileByUsername } from "@/lib/profile-store";
 import { normalizeUsername } from "@/lib/username";
+import { resolveTheme } from "@/lib/themes";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +23,7 @@ export default async function ProfilePage({
 
   return (
     <div
-      className={`min-h-screen portfolio-surface theme-${profile.theme ?? "sand"}`}
+      className={`min-h-screen portfolio-surface theme-${resolveTheme(profile.theme)}`}
     >
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 py-16">
         <header className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
@@ -187,7 +188,7 @@ export default async function ProfilePage({
                   {project.description}
                 </p>
                 <p className="mt-3 text-xs uppercase tracking-[0.2em] text-[color:var(--accent-2)]">
-                  {project.stack.join(" � ")}
+                  {project.stack.join(" · ")}
                 </p>
                 {project.link ? (
                   <a
@@ -207,5 +208,6 @@ export default async function ProfilePage({
     </div>
   );
 }
+
 
 

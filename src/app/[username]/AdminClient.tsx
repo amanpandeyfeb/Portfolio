@@ -3,6 +3,7 @@
 import type { Profile } from "@/lib/profile";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
+import { themeOptions } from "@/lib/themes";
 import { useEffect, useMemo, useState } from "react";
 
 const emptyProfile: Profile = {
@@ -23,32 +24,6 @@ const emptyProfile: Profile = {
   resumeUrl: "",
 };
 
-const themes = [
-  {
-    id: "sand",
-    label: "Sandstone",
-    description: "Warm, editorial, calm",
-    swatches: ["#f8f2e9", "#e9734f", "#2f6b73", "#1f1b16"],
-  },
-  {
-    id: "ocean",
-    label: "Oceanic",
-    description: "Clean, coastal, bright",
-    swatches: ["#eef6f9", "#1d7aa6", "#0f5f6a", "#0f1c2e"],
-  },
-  {
-    id: "midnight",
-    label: "Midnight",
-    description: "Dark, bold, modern",
-    swatches: ["#0f1218", "#9b5cff", "#4fd1c5", "#f5f7fb"],
-  },
-  {
-    id: "citrus",
-    label: "Citrus",
-    description: "Playful, energetic",
-    swatches: ["#fff7ed", "#ff7a18", "#2f7d5c", "#2a1b12"],
-  },
-];
 
 function formatSkills(skills: string[]) {
   return skills.join(", ");
@@ -565,7 +540,7 @@ export default function AdminClient({ username }: { username: string }) {
                   Theme
                 </label>
                 <div className="grid gap-4 md:grid-cols-2">
-                  {themes.map((theme) => {
+                  {themeOptions.map((theme) => {
                     const isSelected = (profile.theme ?? "sand") === theme.id;
                     return (
                       <button
