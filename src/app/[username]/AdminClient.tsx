@@ -156,6 +156,7 @@ export default function AdminClient({ username }: { username: string }) {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
+  const [ownUsername, setOwnUsername] = useState<string | null>(null);
 
   useEffect(() => {
     if (!hasSupabaseEnv()) {
@@ -193,6 +194,7 @@ export default function AdminClient({ username }: { username: string }) {
       }
       const data = (await response.json()) as ProfileResponse;
       setProfileLoaded(true);
+      setOwnUsername(data.username ?? null);
 
       if (data.username && data.username !== username) {
         setIsOwner(false);
@@ -378,6 +380,14 @@ export default function AdminClient({ username }: { username: string }) {
               You&apos;re signed in, but this username belongs to a different
               account.
             </div>
+            {ownUsername ? (
+              <a
+                className="mt-4 inline-flex items-center justify-center rounded-full border border-[#eadfce] px-4 py-2 text-sm font-semibold text-[#1f1b16]"
+                href={`/${ownUsername}/admin`}
+              >
+                Go to your admin page
+              </a>
+            ) : null}
             <button
               className="mt-4 rounded-full bg-[#2f6b73] px-4 py-2 text-sm font-semibold text-white"
               onClick={handleSignOut}
