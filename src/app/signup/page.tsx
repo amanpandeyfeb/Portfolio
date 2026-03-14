@@ -6,7 +6,6 @@ import { isReservedUsername, isValidUsername } from "@/lib/username";
 
 export default function SignupPage() {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [company, setCompany] = useState(""); // honeypot
   const [nickname, setNickname] = useState(""); // honeypot
@@ -73,8 +72,8 @@ export default function SignupPage() {
       return;
     }
 
-    if (!email || !password) {
-      setStatus("Email and password are required.");
+    if (!password) {
+      setStatus("Password is required.");
       return;
     }
 
@@ -98,8 +97,9 @@ export default function SignupPage() {
 
     setStatus("Creating account...");
     const supabase = createSupabaseBrowserClient();
+    const authEmail = `${normalizedUsername}@portfolio.local`;
     const { data, error } = await supabase.auth.signUp({
-      email,
+      email: authEmail,
       password,
     });
 
@@ -110,7 +110,7 @@ export default function SignupPage() {
 
     if (!data.session) {
       const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
+        email: authEmail,
         password,
       });
       if (signInError) {
@@ -168,17 +168,6 @@ export default function SignupPage() {
               ? "Username is taken"
               : ""}
           </div>
-
-          <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-            Email
-          </label>
-          <input
-            className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            type="email"
-            placeholder="you@email.com"
-          />
 
           <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
             Password

@@ -230,21 +230,9 @@ export default function AdminClient({ username }: { username: string }) {
     }
     setAuthStatus("Signing in...");
     const supabase = createSupabaseBrowserClient();
-    const lookup = await fetch("/api/auth/username-login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: loginUsername }),
-    });
-
-    if (!lookup.ok) {
-      const err = (await lookup.json()) as { error?: string };
-      setAuthStatus(err.error ?? "Username lookup failed.");
-      return;
-    }
-
-    const { email } = (await lookup.json()) as { email: string };
+    const authEmail = `${loginUsername.trim().toLowerCase()}@portfolio.local`;
     const { error } = await supabase.auth.signInWithPassword({
-      email,
+      email: authEmail,
       password,
     });
 
