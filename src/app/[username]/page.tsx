@@ -126,48 +126,59 @@ export default function ProfilePage() {
             <p className="text-2xl font-semibold text-[color:var(--accent-2)]">
               {profile.role}
             </p>
-            <p className="text-lg text-[color:var(--muted)]">{profile.summary}</p>
-            <div className="flex flex-wrap gap-3 text-sm">
-              <span className="rounded-full border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2">
-                {profile.location}
-              </span>
-              <a
-                className="rounded-full border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2"
-                href={`mailto:${profile.email}`}
-              >
-                {profile.email}
-              </a>
-              {profile.website ? (
+              <p className="text-lg text-[color:var(--muted)]">{profile.summary}</p>
+              <div className="flex flex-wrap gap-3 text-sm">
+                <span className="rounded-full border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2">
+                  {profile.location}
+                </span>
                 <a
                   className="rounded-full border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2"
-                  href={profile.website}
-                  target="_blank"
-                  rel="noreferrer"
+                  href={`mailto:${profile.email}`}
                 >
-                  {profile.website}
+                  {profile.email}
                 </a>
-              ) : null}
-              {profile.github ? (
-                <a
-                  className="rounded-full border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2"
-                  href={profile.github}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  GitHub
-                </a>
-              ) : null}
-              {profile.linkedin ? (
-                <a
-                  className="rounded-full border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2"
-                  href={profile.linkedin}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  LinkedIn
-                </a>
-              ) : null}
-            </div>
+                {profile.resumeUrl ? (
+                  <a
+                    className="rounded-full border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2 font-semibold text-[color:var(--accent)]"
+                    href={profile.resumeUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    download
+                  >
+                    📥 Download Resume
+                  </a>
+                ) : null}
+                {profile.website ? (
+                  <a
+                    className="rounded-full border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2"
+                    href={profile.website}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {profile.website}
+                  </a>
+                ) : null}
+                {profile.github ? (
+                  <a
+                    className="rounded-full border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2"
+                    href={profile.github}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    GitHub
+                  </a>
+                ) : null}
+                {profile.linkedin ? (
+                  <a
+                    className="rounded-full border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2"
+                    href={profile.linkedin}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    LinkedIn
+                  </a>
+                ) : null}
+              </div>
           </div>
           <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--card)] p-6 shadow-sm">
             <h2 className="display-font text-2xl">Resume Snapshot</h2>
@@ -177,12 +188,24 @@ export default function ProfilePage() {
             <div className="mt-6 flex flex-wrap gap-3">
               {profile.resumeUrl ? (
                 <a
-                  className="inline-flex items-center justify-center rounded-full bg-[color:var(--accent)] px-5 py-2 text-sm font-semibold text-white"
+                  className="inline-flex items-center justify-center rounded-full bg-[color:var(--accent)] px-5 py-2 text-sm font-semibold text-white shadow-lg"
                   href={profile.resumeUrl}
                   target="_blank"
                   rel="noreferrer"
+                  download
                 >
-                  Download Resume
+                  📥 Download Resume
+                </a>
+              ) : null}
+              {profile.resumeUrl ? (
+                <a
+                  className="rounded-full border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2 font-semibold text-[color:var(--accent)]"
+                  href={profile.resumeUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  download
+                >
+                  📥 Download Resume
                 </a>
               ) : null}
               <a
