@@ -414,19 +414,7 @@ export default function AdminClient({ username }: { username: string }) {
               Need an account? Create one at /signup.
             </p>
           </section>
-        ) : !isOwner && profileLoaded ? null : (
-          <section className="grid gap-4 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
-            <div className="flex flex-wrap items-center gap-4">
-              <p className="text-sm text-[#6b5f54]">Signed in.</p>
-              <button
-                className="rounded-full bg-[#2f6b73] px-4 py-2 text-sm font-semibold text-white"
-                onClick={handleSignOut}
-              >
-                Sign out
-              </button>
-            </div>
-          </section>
-        )}
+        ) : !isOwner && profileLoaded ? null : null}
 
         {signedIn && isOwner ? (
           <>
