@@ -112,7 +112,11 @@ export async function saveProfileForUser(userId: string, profile: Profile) {
   return profile;
 }
 
-export async function claimUsername(userId: string, username: string) {
+export async function claimUsername(
+  userId: string,
+  username: string,
+  userEmail?: string
+) {
   if (hasServiceEnv()) {
     const supabase = createSupabaseServiceClient();
     const { data: current } = await supabase
@@ -127,11 +131,34 @@ export async function claimUsername(userId: string, username: string) {
 
     const { data: existing } = await supabase
       .from(TABLE)
-      .select("username")
+      .select("username, data")
       .eq("username", username)
       .maybeSingle();
 
     if (existing?.username) {
+      const existingEmail =
+        (existing.data as { email?: string } | null | undefined)?.email ?? "";
+      if (userEmail && existingEmail && existingEmail === userEmail) {
+        const { error: transferError } = await supabase
+          .from(TABLE)
+          .update({
+            user_id: userId,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("username", username);
+
+        if (transferError) {
+          console.error(transferError);
+          throw transferError;
+        }
+
+        const profile = normalizeProfile({
+          ...(existing.data as Partial<Profile>),
+          username,
+        });
+        return profile;
+      }
+
       throw new Error("Username already taken.");
     }
 
@@ -172,7 +199,7 @@ export async function claimUsername(userId: string, username: string) {
 
   const { data: existing } = await supabase
     .from(TABLE)
-    .select("username")
+    .select("username, data")
     .eq("username", username)
     .maybeSingle();
 

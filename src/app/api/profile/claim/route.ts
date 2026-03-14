@@ -17,7 +17,10 @@ async function requireUser() {
 }
 
 export async function POST(request: Request) {
-  const userId = await requireUser();
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.auth.getUser();
+  const userId = data.user?.id ?? null;
+  const userEmail = data.user?.email ?? "";
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
@@ -34,7 +37,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const profile = await claimUsername(userId, username);
+    const profile = await claimUsername(userId, username, userEmail);
     return NextResponse.json({ profile });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Claim failed.";
