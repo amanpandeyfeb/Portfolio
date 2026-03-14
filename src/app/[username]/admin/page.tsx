@@ -3,10 +3,11 @@ import { normalizeUsername } from "@/lib/username";
 
 export const dynamic = "force-dynamic";
 
-export default function UsernameAdminPage({
+export default async function UsernameAdminPage({
   params,
 }: {
-  params: { username: string };
+  params: Promise<{ username: string }>;
 }) {
-  return <AdminClient username={normalizeUsername(params.username)} />;
+  const resolvedParams = await params;
+  return <AdminClient username={normalizeUsername(resolvedParams.username)} />;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { normalizeUsername } from "@/lib/username";
 import { resolveTheme } from "@/lib/themes";
 import type { Profile } from "@/lib/profile";
@@ -14,7 +14,9 @@ export default function ProfilePage({
 }: {
   params: { username: string };
 }) {
-  const slug = useMemo(() => normalizeUsername(params.username), [params.username]);
+  const resolvedParams = use(params);
+  const username = (resolvedParams as { username: string }).username;
+  const slug = normalizeUsername(username);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
