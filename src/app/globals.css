@@ -125,13 +125,7 @@ body {
   animation-delay: 4s;
 }
 
-h1, h2, h3 {
-  @apply animate-fade-in;
-}
 
-section {
-  @apply animate-slide-up animation-delay-500;
-}
 
 .card-hover {
   @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1;
