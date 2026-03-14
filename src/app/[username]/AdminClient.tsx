@@ -157,6 +157,7 @@ export default function AdminClient({ username }: { username: string }) {
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
   const [ownUsername, setOwnUsername] = useState<string | null>(null);
+  const [usernameMismatch, setUsernameMismatch] = useState(false);
 
   useEffect(() => {
     if (!hasSupabaseEnv()) {
@@ -198,10 +199,12 @@ export default function AdminClient({ username }: { username: string }) {
 
       if (data.username && data.username !== username) {
         setIsOwner(false);
+        setUsernameMismatch(true);
         return;
       }
 
       setIsOwner(true);
+      setUsernameMismatch(false);
       setProfile(data.profile);
       setSkillsText(formatSkills(data.profile.skills));
       setExperienceText(formatExperience(data.profile));
@@ -211,6 +214,12 @@ export default function AdminClient({ username }: { username: string }) {
 
     load();
   }, [signedIn, username]);
+
+  useEffect(() => {
+    if (signedIn && usernameMismatch && ownUsername) {
+      window.location.href = `/${ownUsername}/admin`;
+    }
+  }, [signedIn, usernameMismatch, ownUsername]);
 
   const resumePreview = useMemo(() => {
     if (!profile.resumeText) {
