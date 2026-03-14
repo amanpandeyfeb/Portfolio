@@ -31,12 +31,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (file.type !== "application/pdf") {
-    return NextResponse.json(
-      { error: "Only PDF resumes are supported right now." },
-      { status: 400 }
-    );
-  }
+
 
   const arrayBuffer = await file.arrayBuffer();
   if (arrayBuffer.byteLength > MAX_BYTES) {
