@@ -278,7 +278,7 @@ export default function ProfilePage({
                   {project.description}
                 </p>
                 <p className="mt-3 text-xs uppercase tracking-[0.2em] text-[color:var(--accent-2)]">
-                  {project.stack.join(" · ")}
+                  {project.stack.join(" â€¢ ")}
                 </p>
                 {project.link ? (
                   <a
