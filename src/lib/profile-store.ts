@@ -12,7 +12,9 @@ export type UserProfileRecord = {
 };
 
 async function readPublicProfileByUsername(username: string) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = hasServiceEnv()
+    ? createSupabaseServiceClient()
+    : await createSupabaseServerClient();
   const { data, error } = await supabase
     .from(TABLE)
     .select("data, username")
