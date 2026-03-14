@@ -113,11 +113,53 @@ export async function saveProfileForUser(userId: string, profile: Profile) {
 }
 
 export async function claimUsername(userId: string, username: string) {
-  if (!hasServiceEnv()) {
-    throw new Error("SUPABASE_SERVICE_ROLE_KEY is required for signup.");
+  if (hasServiceEnv()) {
+    const supabase = createSupabaseServiceClient();
+    const { data: current } = await supabase
+      .from(TABLE)
+      .select("username")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (current?.username && current.username !== username) {
+      throw new Error("Username already set for this account.");
+    }
+
+    const { data: existing } = await supabase
+      .from(TABLE)
+      .select("username")
+      .eq("username", username)
+      .maybeSingle();
+
+    if (existing?.username) {
+      throw new Error("Username already taken.");
+    }
+
+    const profile = normalizeProfile({
+      ...defaultProfile,
+      username,
+    });
+
+    const { error } = await supabase.from(TABLE).upsert(
+      {
+        user_id: userId,
+        username,
+        data: profile,
+        public: true,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id" }
+    );
+
+    if (error) {
+      console.error(error);
+      throw error;
+    }
+
+    return profile;
   }
 
-  const supabase = createSupabaseServiceClient();
+  const supabase = await createSupabaseServerClient();
   const { data: current } = await supabase
     .from(TABLE)
     .select("username")
@@ -163,11 +205,22 @@ export async function claimUsername(userId: string, username: string) {
 }
 
 export async function isUsernameAvailable(username: string) {
-  if (!hasServiceEnv()) {
-    return false;
+  if (hasServiceEnv()) {
+    const supabase = createSupabaseServiceClient();
+    const { data } = await supabase
+      .from(TABLE)
+      .select("username")
+      .eq("username", username)
+      .maybeSingle();
+
+    return !data?.username;
   }
 
-  const supabase = createSupabaseServiceClient();
+  if (!hasSupabaseEnv()) {
+    return true;
+  }
+
+  const supabase = await createSupabaseServerClient();
   const { data } = await supabase
     .from(TABLE)
     .select("username")
