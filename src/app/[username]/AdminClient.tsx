@@ -232,11 +232,8 @@ export default function AdminClient({ username }: { username: string }) {
       if (data.username && data.username !== username) {
         setIsOwner(false);
         setUsernameMismatch(true);
-        const supabase = createSupabaseBrowserClient();
-        await supabase.auth.signOut();
-        setSignedIn(false);
         setAuthStatus(
-          `You're signed in with a different account. Please sign in with the email used for ${username}.`
+          `You're signed in as ${data.username}. Please open your own admin page or sign out to switch accounts.`
         );
         return;
       }
@@ -252,12 +249,6 @@ export default function AdminClient({ username }: { username: string }) {
 
     load();
   }, [signedIn, username]);
-
-  useEffect(() => {
-    if (signedIn && usernameMismatch && ownUsername) {
-      return;
-    }
-  }, [signedIn, usernameMismatch, ownUsername]);
 
   const resumePreview = useMemo(() => {
     if (!profile.resumeText) {
@@ -362,7 +353,9 @@ export default function AdminClient({ username }: { username: string }) {
             Admin
           </p>
           <h1 className="display-font text-4xl text-[#1f1b16]">
-            Update {username}&apos;s portfolio
+            {username.trim()
+              ? `Update ${username}'s portfolio`
+              : "Update your portfolio"}
           </h1>
           <p className="text-sm text-[#6b5f54]">
             Login is required to edit or upload a resume. Your portfolio page
@@ -387,38 +380,18 @@ export default function AdminClient({ username }: { username: string }) {
           <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
             <p className="text-sm text-[#6b5f54]">Checking login...</p>
           </section>
-        ) : !signedIn ? (
+        ) : !username.trim() ? (
           <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
             <div className="rounded-2xl border border-[#f1c7b8] bg-[#fff2ec] p-4 text-sm text-[#8b4f3c]">
-              Not for you. Be the owner of this username.
+              Username missing in URL. Open your admin page like
+              {" "}
+              <span className="font-semibold">/yourusername/admin</span>.
             </div>
-            <div className="mt-4 grid gap-4 md:grid-cols-2">
-              <input
-                className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-                type="email"
-                placeholder="you@email.com"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-              />
-              <input
-                className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </div>
-            <button
-              className="mt-4 rounded-full bg-[#2f6b73] px-4 py-2 text-sm font-semibold text-white"
-              onClick={handleSignIn}
-            >
-              Sign in
-            </button>
             {authStatus ? (
-              <p className="text-sm text-[#6b5f54]">{authStatus}</p>
+              <p className="mt-3 text-sm text-[#6b5f54]">{authStatus}</p>
             ) : null}
-            <p className="text-xs text-[#6b5f54]">
-              Need an account? Create one at /signup.
+            <p className="mt-3 text-xs text-[#6b5f54]">
+              Need a username? Create one at /signup.
             </p>
           </section>
         ) : !signedIn ? (
@@ -455,12 +428,28 @@ export default function AdminClient({ username }: { username: string }) {
               Need an account? Create one at /signup.
             </p>
           </section>
-        ) : !isOwner && profileLoaded ? (
+        ) : !isOwner && profileLoaded && usernameMismatch ? (
           <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
             <div className="rounded-2xl border border-[#f1c7b8] bg-[#fff2ec] p-4 text-sm text-[#8b4f3c]">
               You&apos;re signed in, but this username belongs to a different
               account. Please sign in with the correct email for {username}.
             </div>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              {ownUsername ? (
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    window.open(`/${ownUsername}/admin`, "_self")
+                  }
+                >
+                  Go to your admin page
+                </Button>
+              ) : null}
+              <Button onClick={handleSignOut}>Sign out</Button>
+            </div>
+            {authStatus ? (
+              <p className="mt-3 text-sm text-[#6b5f54]">{authStatus}</p>
+            ) : null}
           </section>
         ) : null}
 
