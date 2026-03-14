@@ -6,6 +6,7 @@ import { isReservedUsername, isValidUsername } from "@/lib/username";
 
 export default function SignupPage() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [company, setCompany] = useState(""); // honeypot
   const [nickname, setNickname] = useState(""); // honeypot
@@ -72,8 +73,8 @@ export default function SignupPage() {
       return;
     }
 
-    if (!password) {
-      setStatus("Password is required.");
+    if (!email || !password) {
+      setStatus("Email and password are required.");
       return;
     }
 
@@ -97,10 +98,12 @@ export default function SignupPage() {
 
     setStatus("Creating account...");
     const supabase = createSupabaseBrowserClient();
-    const authEmail = `${normalizedUsername}@portfolio.local`;
     const { data, error } = await supabase.auth.signUp({
-      email: authEmail,
+      email,
       password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/${normalizedUsername}/admin`,
+      },
     });
 
     if (error) {
@@ -109,14 +112,8 @@ export default function SignupPage() {
     }
 
     if (!data.session) {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: authEmail,
-        password,
-      });
-      if (signInError) {
-        setStatus("Account created. Please sign in to continue.");
-        return;
-      }
+      setStatus("Check your email to confirm the account.");
+      return;
     }
 
     const claimRes = await fetch("/api/profile/claim", {
@@ -170,6 +167,17 @@ export default function SignupPage() {
           </div>
 
           <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+            Email
+          </label>
+          <input
+            className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            type="email"
+            placeholder="you@email.com"
+          />
+
+          <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
             Password
           </label>
           <input
@@ -179,7 +187,6 @@ export default function SignupPage() {
             type="password"
             placeholder="Minimum 6 characters"
           />
-
           <input
             className="hidden"
             value={company}

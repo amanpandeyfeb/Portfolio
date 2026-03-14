@@ -150,7 +150,7 @@ export default function AdminClient({ username }: { username: string }) {
   const [status, setStatus] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [loginUsername, setLoginUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authStatus, setAuthStatus] = useState<string | null>(null);
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
@@ -224,15 +224,14 @@ export default function AdminClient({ username }: { username: string }) {
       setAuthStatus("Supabase is not configured yet.");
       return;
     }
-    if (!loginUsername || !password) {
-      setAuthStatus("Enter username and password.");
+    if (!email || !password) {
+      setAuthStatus("Enter email and password.");
       return;
     }
     setAuthStatus("Signing in...");
     const supabase = createSupabaseBrowserClient();
-    const authEmail = `${loginUsername.trim().toLowerCase()}@portfolio.local`;
     const { error } = await supabase.auth.signInWithPassword({
-      email: authEmail,
+      email,
       password,
     });
 
@@ -347,10 +346,10 @@ export default function AdminClient({ username }: { username: string }) {
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <input
                 className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-                type="text"
-                placeholder="username"
-                value={loginUsername}
-                onChange={(event) => setLoginUsername(event.target.value)}
+                type="email"
+                placeholder="you@email.com"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
               />
               <input
                 className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
