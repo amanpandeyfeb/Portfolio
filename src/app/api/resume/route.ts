@@ -10,18 +10,18 @@ const MAX_BYTES = 5 * 1024 * 1024;
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN ?? "";
 
 async function requireUserOrToken(request: Request) {
-  if (hasSupabaseEnv()) {
-    const supabase = await createSupabaseServerClient();
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) return null;
-    return { userId: data.user.id };
-  }
-
   if (ADMIN_TOKEN) {
     const auth = request.headers.get("authorization");
     if (auth === `Bearer ${ADMIN_TOKEN}`) {
       return { userId: undefined };
     }
+  }
+
+  if (hasSupabaseEnv()) {
+    const supabase = await createSupabaseServerClient();
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) return null;
+    return { userId: data.user.id };
   }
 
   return null;
