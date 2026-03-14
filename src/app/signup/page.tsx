@@ -109,7 +109,7 @@ export default function SignupPage() {
     }
 
     if (!data.session) {
-      setStatus("Check your email to confirm the account, then sign in.");
+      setStatus("Account created. Please sign in.");
       return;
     }
 
