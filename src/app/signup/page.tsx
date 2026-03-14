@@ -10,6 +10,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [company, setCompany] = useState(""); // honeypot
   const [nickname, setNickname] = useState(""); // honeypot
+  const [signInUsername, setSignInUsername] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
   const [available, setAvailable] = useState<boolean | null>(null);
@@ -206,9 +207,29 @@ export default function SignupPage() {
             Create account
           </button>
           {status ? <p className="text-sm text-[#6b5f54]">{status}</p> : null}
-          <p className="text-xs text-[#6b5f54]">
-            Already have an account? Go to /username/admin to sign in.
-          </p>
+          <div className="mt-2 grid gap-3">
+            <p className="text-xs text-[#6b5f54]">
+              Already have an account? Enter your username to sign in.
+            </p>
+            <div className="grid gap-3 md:grid-cols-[1fr_auto]">
+              <input
+                className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                value={signInUsername}
+                onChange={(event) => setSignInUsername(event.target.value)}
+                placeholder="yourusername"
+              />
+              <a
+                className="inline-flex items-center justify-center rounded-full border border-[#eadfce] px-5 py-2 text-sm font-semibold text-[#1f1b16]"
+                href={
+                  signInUsername.trim()
+                    ? `/${signInUsername.trim().toLowerCase()}/admin`
+                    : "/"
+                }
+              >
+                Sign in
+              </a>
+            </div>
+          </div>
         </div>
       </main>
     </div>
