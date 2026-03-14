@@ -187,6 +187,13 @@ export default function AdminClient({ username }: { username: string }) {
     }
 
     const load = async () => {
+      if (!username.trim()) {
+        setAuthStatus("Username missing in URL. Open /yourusername/admin.");
+        setIsOwner(false);
+        setProfileLoaded(true);
+        return;
+      }
+
       const response = await fetch("/api/profile", { cache: "no-store" });
       if (!response.ok) {
         setIsOwner(false);
@@ -197,7 +204,7 @@ export default function AdminClient({ username }: { username: string }) {
       setProfileLoaded(true);
       setOwnUsername(data.username ?? null);
 
-      if (!data.username) {
+      if (!data.username && username.trim()) {
         const claim = await fetch("/api/profile/claim", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
