@@ -141,14 +141,13 @@ export default function AdminClient() {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [email, setEmail] = useState("");
   const [authStatus, setAuthStatus] = useState<string | null>(null);
-  const [signedIn, setSignedIn] = useState(false);
-  const [adminToken, setAdminToken] = useState("");
-
-  const hasAdminToken = adminToken.trim().length > 0;
-  const canEdit = signedIn || hasAdminToken;
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (!hasSupabaseEnv()) return;
+    if (!hasSupabaseEnv()) {
+      setSignedIn(false);
+      return;
+    }
     const supabase = createSupabaseBrowserClient();
     supabase.auth.getSession().then(({ data }) => {
       setSignedIn(Boolean(data.session));
@@ -230,7 +229,6 @@ export default function AdminClient() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: hasAdminToken ? `Bearer ${adminToken}` : "",
       },
       body: JSON.stringify(payload),
     });
@@ -257,9 +255,6 @@ export default function AdminClient() {
 
     const response = await fetch("/api/resume", {
       method: "POST",
-      headers: {
-        Authorization: hasAdminToken ? `Bearer ${adminToken}` : "",
-      },
       body: formData,
     });
 
@@ -296,58 +291,54 @@ export default function AdminClient() {
         {!hasSupabaseEnv() ? (
           <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
             <p className="text-sm text-[#6b5f54]">
-              Supabase is not configured. Use your admin token to unlock the
-              editor.
+              Supabase is not configured. Add the Supabase environment variables
+              in Vercel, then refresh this page.
             </p>
           </section>
-        ) : (
+        ) : signedIn === null ? (
+          <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
+            <p className="text-sm text-[#6b5f54]">Checking login...</p>
+          </section>
+        ) : !signedIn ? (
           <section className="grid gap-4 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
-            {signedIn ? (
-              <div className="flex flex-wrap items-center gap-4">
-                <p className="text-sm text-[#6b5f54]">Signed in.</p>
-                <button
-                  className="rounded-full bg-[#2f6b73] px-4 py-2 text-sm font-semibold text-white"
-                  onClick={handleSignOut}
-                >
-                  Sign out
-                </button>
-              </div>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-[1fr_auto]">
-                <input
-                  className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-                  type="email"
-                  placeholder="your@email.com"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                />
-                <button
-                  className="rounded-full bg-[#2f6b73] px-4 py-2 text-sm font-semibold text-white"
-                  onClick={handleSignIn}
-                >
-                  Send magic link
-                </button>
-              </div>
-            )}
+            <p className="text-sm text-[#6b5f54]">
+              Please sign in to edit your portfolio.
+            </p>
+            <div className="grid gap-4 md:grid-cols-[1fr_auto]">
+              <input
+                className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
+              <button
+                className="rounded-full bg-[#2f6b73] px-4 py-2 text-sm font-semibold text-white"
+                onClick={handleSignIn}
+              >
+                Send magic link
+              </button>
+            </div>
             {authStatus ? (
               <p className="text-sm text-[#6b5f54]">{authStatus}</p>
             ) : null}
           </section>
+        ) : (
+          <section className="grid gap-4 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
+            <div className="flex flex-wrap items-center gap-4">
+              <p className="text-sm text-[#6b5f54]">Signed in.</p>
+              <button
+                className="rounded-full bg-[#2f6b73] px-4 py-2 text-sm font-semibold text-white"
+                onClick={handleSignOut}
+              >
+                Sign out
+              </button>
+            </div>
+          </section>
         )}
 
-        <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
-          <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-            Admin token (from .env.local or Vercel env)
-          </label>
-          <input
-            className="mt-3 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-            type="password"
-            value={adminToken}
-            onChange={(event) => setAdminToken(event.target.value)}
-          />
-        </section>
-
-        <section className="grid gap-6 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm md:grid-cols-2">
+        {signedIn ? (
+          <section className="grid gap-6 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm md:grid-cols-2">
           <div className="space-y-3">
             <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
               Name
@@ -358,7 +349,6 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, name: event.target.value }))
               }
-              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -371,7 +361,6 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, role: event.target.value }))
               }
-              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -384,7 +373,6 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, location: event.target.value }))
               }
-              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -397,7 +385,6 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, email: event.target.value }))
               }
-              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -410,7 +397,6 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, phone: event.target.value }))
               }
-              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -423,7 +409,6 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, website: event.target.value }))
               }
-              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -436,7 +421,6 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, github: event.target.value }))
               }
-              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -449,7 +433,6 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, linkedin: event.target.value }))
               }
-              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3 md:col-span-2">
@@ -462,7 +445,6 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, summary: event.target.value }))
               }
-              disabled={!canEdit}
             />
           </div>
         </section>
@@ -476,7 +458,6 @@ export default function AdminClient() {
               className="h-20 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
               value={skillsText}
               onChange={(event) => setSkillsText(event.target.value)}
-              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -487,7 +468,6 @@ export default function AdminClient() {
               className="h-32 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
               value={experienceText}
               onChange={(event) => setExperienceText(event.target.value)}
-              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -498,7 +478,6 @@ export default function AdminClient() {
               className="h-32 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
               value={projectsText}
               onChange={(event) => setProjectsText(event.target.value)}
-              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -509,14 +488,12 @@ export default function AdminClient() {
               className="h-24 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
               value={educationText}
               onChange={(event) => setEducationText(event.target.value)}
-              disabled={!canEdit}
             />
           </div>
           <div className="flex items-center gap-4">
             <button
               className="rounded-full bg-[#2f6b73] px-5 py-2 text-sm font-semibold text-white"
               onClick={handleSave}
-              disabled={!canEdit}
             >
               Save portfolio data
             </button>
@@ -536,13 +513,11 @@ export default function AdminClient() {
               onChange={(event) =>
                 setResumeFile(event.target.files ? event.target.files[0] : null)
               }
-              disabled={!canEdit}
             />
           </div>
           <button
             className="rounded-full bg-[#e9734f] px-5 py-2 text-sm font-semibold text-white"
             onClick={handleUpload}
-            disabled={!canEdit}
           >
             Scan resume
           </button>
@@ -553,6 +528,7 @@ export default function AdminClient() {
             {resumePreview}
           </div>
         </section>
+        ) : null}
       </main>
     </div>
   );
