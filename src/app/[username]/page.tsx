@@ -247,7 +247,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <div className="self-start rounded-3xl border border-[color:var(--border)] bg-[color:var(--card)] p-6 shadow-sm">
+          <div className="self-start card-hover rounded-3xl border border-[color:var(--border)] bg-[color:var(--card)] p-6 shadow-sm">
             <h2 className="display-font text-3xl">Education</h2>
             <div className="mt-6 space-y-4">
               {profile.education.map((item) => (
@@ -263,7 +263,7 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        <section className="self-start rounded-3xl border border-[color:var(--border)] bg-[color:var(--card)] p-6 shadow-sm">
+        <section className="card-hover self-start rounded-3xl border border-[color:var(--border)] bg-[color:var(--card)] p-6 shadow-sm">
           <h2 className="display-font text-3xl">Projects</h2>
           <div className="mt-6 grid gap-6 md:grid-cols-2">
             {profile.projects.map((project) => (
