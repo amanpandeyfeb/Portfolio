@@ -17,9 +17,8 @@ async function readPublicProfileByUsername(username: string) {
     : await createSupabaseServerClient();
   const { data, error } = await supabase
     .from(TABLE)
-    .select("data, username")
+    .select("data, username, public")
     .eq("username", username)
-    .eq("public", true)
     .maybeSingle();
 
   if (error) {
@@ -28,6 +27,9 @@ async function readPublicProfileByUsername(username: string) {
   }
 
   if (!data?.data) return null;
+  const isPublic =
+    data.public === true || data.public === "true" || data.public === 1;
+  if (!isPublic) return null;
   return {
     username: data.username as string,
     profile: normalizeProfile(data.data as Partial<Profile>),
