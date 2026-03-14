@@ -45,7 +45,30 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
+ 
+  
+  // Upload to Supabase storage first
+  const record = await loadProfileForUser(userId);
+  const supabase = await createSupabaseServerClient();
+  const fileName = `${record.username || 'resume'}-${Date.now()}.pdf`;
+  const { data: uploadData, error: uploadError } = await supabase.storage
+    .from('resumes')
+    .upload(fileName, Buffer.from(arrayBuffer), {
+      contentType: 'application/pdf',
+      upsert: true
+    });
+  
+  if (uploadError) {
+    return NextResponse.json({ error: 'Storage upload failed: ' + uploadError.message }, { status: 500 });
+  }
+  
+  const { data: { publicUrl } } = supabase.storage
+    .from('resumes')
+    .getPublicUrl(fileName);
 
+  const resumeUrl = publicUrl;
+
+  // Parse text (after upload)
   let text = "";
   try {
     const mod = (await import("pdf-parse")) as unknown as {
@@ -57,27 +80,23 @@ export async function POST(request: Request) {
     const parsed = await pdfParse(Buffer.from(arrayBuffer));
     text = parsed.text?.trim() ?? "";
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Unable to parse PDF.";
-    return NextResponse.json(
-      { error: "Resume parsing failed.", detail: message },
-      { status: 400 }
-    );
+    console.log('Parsing skipped:', error);
   }
 
-  const record = await loadProfileForUser(userId);
+  const recordForMerge = await loadProfileForUser(userId);
   const baseProfile = {
-    ...record.profile,
-    username: record.username,
+    ...recordForMerge.profile,
+    username: recordForMerge.username,
+    resumeUrl
   };
   const updated = mergeProfileFromResume(text, {
     ...baseProfile,
-    resumeText: text,
+    resumeText: text
   });
 
   try {
     await saveProfileForUser(userId, updated);
-    return NextResponse.json({ text, profile: updated });
+    return NextResponse.json({ resumeUrl, text, profile: updated });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Save failed.";
     return NextResponse.json({ error: message }, { status: 500 });
