@@ -90,7 +90,7 @@ export default async function Home() {
           </div>
         </header>
 
-        <section className="grid gap-8 lg:grid-cols-[1fr_1fr]">
+        <section className="grid items-start gap-8 lg:grid-cols-[1fr_1fr]">
           <div className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
             <h2 className="display-font text-3xl">Skills</h2>
             <div className="mt-4 flex flex-wrap gap-2">
@@ -104,9 +104,9 @@ export default async function Home() {
               ))}
             </div>
           </div>
-          <div className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
+          <div className="self-start rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
             <h2 className="display-font text-3xl">Contact</h2>
-            <div className="mt-4 space-y-3 text-sm text-[#6b5f54]">
+            <div className="mt-4 grid gap-2 text-sm text-[#6b5f54]">
               <p>{profile.email}</p>
               <p>{profile.phone}</p>
               <p>{profile.location}</p>
@@ -114,7 +114,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+        <section className="grid items-start gap-8 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
             <h2 className="display-font text-3xl">Experience</h2>
             <div className="mt-6 space-y-6">
@@ -141,7 +141,7 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
+          <div className="self-start rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
             <h2 className="display-font text-3xl">Education</h2>
             <div className="mt-6 space-y-4">
               {profile.education.map((item) => (
@@ -157,7 +157,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
+        <section className="self-start rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
           <h2 className="display-font text-3xl">Projects</h2>
           <div className="mt-6 grid gap-6 md:grid-cols-2">
             {profile.projects.map((project) => (
