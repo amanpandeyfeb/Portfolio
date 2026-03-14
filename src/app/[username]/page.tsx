@@ -12,7 +12,7 @@ type ProfileResponse = { profile?: Profile };
 export default function ProfilePage({
   params,
 }: {
-  params: { username: string };
+  params: Promise<{ username: string }> | { username: string };
 }) {
   const resolvedParams = use(params);
   const username = (resolvedParams as { username: string }).username;
