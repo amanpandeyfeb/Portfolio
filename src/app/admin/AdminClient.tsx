@@ -13,6 +13,7 @@ const emptyProfile: Profile = {
   phone: "",
   website: "",
   github: "",
+  linkedin: "",
   summary: "",
   skills: [],
   experience: [],
@@ -434,6 +435,19 @@ export default function AdminClient() {
               value={profile.github}
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, github: event.target.value }))
+              }
+              disabled={!canEdit}
+            />
+          </div>
+          <div className="space-y-3">
+            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+              LinkedIn
+            </label>
+            <input
+              className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+              value={profile.linkedin}
+              onChange={(event) =>
+                setProfile((prev) => ({ ...prev, linkedin: event.target.value }))
               }
               disabled={!canEdit}
             />

@@ -35,14 +35,16 @@ export default async function Home() {
               >
                 {profile.email}
               </a>
-              <a
-                className="rounded-full border border-[#eadfce] bg-white px-4 py-2"
-                href={profile.website}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {profile.website}
-              </a>
+              {profile.website ? (
+                <a
+                  className="rounded-full border border-[#eadfce] bg-white px-4 py-2"
+                  href={profile.website}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {profile.website}
+                </a>
+              ) : null}
               {profile.github ? (
                 <a
                   className="rounded-full border border-[#eadfce] bg-white px-4 py-2"
@@ -51,6 +53,16 @@ export default async function Home() {
                   rel="noreferrer"
                 >
                   GitHub
+                </a>
+              ) : null}
+              {profile.linkedin ? (
+                <a
+                  className="rounded-full border border-[#eadfce] bg-white px-4 py-2"
+                  href={profile.linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  LinkedIn
                 </a>
               ) : null}
             </div>
@@ -162,14 +174,16 @@ export default async function Home() {
                 <p className="mt-3 text-xs uppercase tracking-[0.2em] text-[#2f6b73]">
                   {project.stack.join(" · ")}
                 </p>
-                <a
-                  className="mt-4 inline-flex text-sm font-semibold text-[#e9734f]"
-                  href={project.link}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  View project
-                </a>
+                {project.link ? (
+                  <a
+                    className="mt-4 inline-flex text-sm font-semibold text-[#e9734f]"
+                    href={project.link}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    View project
+                  </a>
+                ) : null}
               </article>
             ))}
           </div>

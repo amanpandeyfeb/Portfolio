@@ -6,35 +6,31 @@
   "phone": "+91 9667911138",
   "website": "",
   "github": "https://github.com/amanpandeyfeb",
+  "linkedin": "",
   "summary": "High-performing Java Full Stack Developer with 4.5+ years of experience in SDLC, Agile, and building scalable web applications. Strong in Java, Spring Boot, React, AWS, and database design.",
   "skills": [
     "Java 8/17",
-    "JavaScript",
-    "Python",
     "Spring Boot",
     "Spring MVC",
     "Spring Security",
-    "JPA",
-    "JDBC",
+    "Microservices",
     "REST APIs",
     "React",
     "Redux",
+    "JavaScript",
     "HTML",
     "CSS",
-    "JWT",
     "AWS (Lambda, EC2, S3, API Gateway, RDS)",
     "PostgreSQL",
     "MySQL",
     "DynamoDB",
-    "Git",
-    "GitLab",
     "Docker",
-    "Jenkins",
     "Kubernetes",
-    "Maven",
+    "Jenkins",
+    "Git",
+    "Jira",
     "Postman",
-    "Swagger",
-    "Jira"
+    "Swagger"
   ],
   "experience": [
     {
@@ -62,7 +58,31 @@
       ]
     }
   ],
-  "projects": [],
+  "projects": [
+    {
+      "name": "Inventory Verification Platform",
+      "link": "",
+      "description": "Full-stack inventory verification system with secure authentication, microservices, and responsive dashboards.",
+      "stack": [
+        "Java",
+        "Spring Boot",
+        "React",
+        "AWS",
+        "PostgreSQL"
+      ]
+    },
+    {
+      "name": "Play Store Search Optimization",
+      "link": "",
+      "description": "Backend services that improved search latency and data retrieval for Google Play tools.",
+      "stack": [
+        "Java",
+        "Spring Boot",
+        "PostgreSQL",
+        "AWS"
+      ]
+    }
+  ],
   "education": [
     {
       "school": "Visvesvaraya Technological University, Bengaluru, Karnataka, India",

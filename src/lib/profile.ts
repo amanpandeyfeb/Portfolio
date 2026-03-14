@@ -30,6 +30,7 @@ export type Profile = {
   phone: string;
   website: string;
   github: string;
+  linkedin: string;
   summary: string;
   skills: string[];
   experience: ExperienceItem[];
@@ -48,6 +49,7 @@ const defaultProfile: Profile = {
   phone: "+1 555 123 4567",
   website: "https://your-website.com",
   github: "https://github.com/amanpandeyfeb",
+  linkedin: "",
   summary:
     "Short intro about your work, what you love building, and the impact you aim for.",
   skills: ["React", "Next.js", "TypeScript", "Node.js", "PostgreSQL"],
@@ -98,6 +100,8 @@ export function normalizeProfile(input: Partial<Profile>): Profile {
       : defaultProfile.education,
     resumeText: typeof input.resumeText === "string" ? input.resumeText : "",
     github: typeof input.github === "string" ? input.github : defaultProfile.github,
+    linkedin:
+      typeof input.linkedin === "string" ? input.linkedin : defaultProfile.linkedin,
   };
 }
 
