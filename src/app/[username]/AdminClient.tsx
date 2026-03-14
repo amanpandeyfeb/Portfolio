@@ -150,7 +150,7 @@ export default function AdminClient({ username }: { username: string }) {
   const [status, setStatus] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [email, setEmail] = useState("");
+  const [loginUsername, setLoginUsername] = useState("");
   const [password, setPassword] = useState("");
   const [authStatus, setAuthStatus] = useState<string | null>(null);
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
@@ -224,12 +224,25 @@ export default function AdminClient({ username }: { username: string }) {
       setAuthStatus("Supabase is not configured yet.");
       return;
     }
-    if (!email || !password) {
-      setAuthStatus("Enter both email and password.");
+    if (!loginUsername || !password) {
+      setAuthStatus("Enter username and password.");
       return;
     }
     setAuthStatus("Signing in...");
     const supabase = createSupabaseBrowserClient();
+    const lookup = await fetch("/api/auth/username-login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: loginUsername }),
+    });
+
+    if (!lookup.ok) {
+      const err = (await lookup.json()) as { error?: string };
+      setAuthStatus(err.error ?? "Username lookup failed.");
+      return;
+    }
+
+    const { email } = (await lookup.json()) as { email: string };
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -346,10 +359,10 @@ export default function AdminClient({ username }: { username: string }) {
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <input
                 className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
-                type="email"
-                placeholder="you@email.com"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                type="text"
+                placeholder="username"
+                value={loginUsername}
+                onChange={(event) => setLoginUsername(event.target.value)}
               />
               <input
                 className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
