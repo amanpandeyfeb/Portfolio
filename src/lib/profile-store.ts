@@ -1,19 +1,23 @@
 ﻿import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { adminProfileId, hasServiceEnv, hasSupabaseEnv } from "@/lib/supabase/env";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
-import { normalizeProfile, readProfile, writeProfile } from "@/lib/profile";
+import { hasServiceEnv, hasSupabaseEnv } from "@/lib/supabase/env";
+import { defaultProfile, normalizeProfile, readProfile, writeProfile } from "@/lib/profile";
 import type { Profile } from "@/lib/profile";
 
 const TABLE = "portfolio_profiles";
 
-async function readPublicProfileFromSupabase(): Promise<Profile | null> {
+export type UserProfileRecord = {
+  username: string;
+  profile: Profile;
+};
+
+async function readPublicProfileByUsername(username: string) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from(TABLE)
-    .select("data")
+    .select("data, username")
+    .eq("username", username)
     .eq("public", true)
-    .order("updated_at", { ascending: false })
-    .limit(1)
     .maybeSingle();
 
   if (error) {
@@ -22,14 +26,17 @@ async function readPublicProfileFromSupabase(): Promise<Profile | null> {
   }
 
   if (!data?.data) return null;
-  return normalizeProfile(data.data as Partial<Profile>);
+  return {
+    username: data.username as string,
+    profile: normalizeProfile(data.data as Partial<Profile>),
+  };
 }
 
-async function readProfileFromSupabase(userId: string): Promise<Profile | null> {
+async function readProfileByUser(userId: string) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from(TABLE)
-    .select("data")
+    .select("data, username")
     .eq("user_id", userId)
     .maybeSingle();
 
@@ -39,14 +46,29 @@ async function readProfileFromSupabase(userId: string): Promise<Profile | null> 
   }
 
   if (!data?.data) return null;
-  return normalizeProfile(data.data as Partial<Profile>);
+  return {
+    username: data.username as string,
+    profile: normalizeProfile(data.data as Partial<Profile>),
+  };
 }
 
-async function writeProfileToSupabase(userId: string, profile: Profile) {
+async function writeProfileByUser(userId: string, profile: Profile) {
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.from(TABLE).upsert(
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select("username")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+
+  const { error: upsertError } = await supabase.from(TABLE).upsert(
     {
       user_id: userId,
+      username: data?.username ?? profile.username,
       data: profile,
       public: true,
       updated_at: new Date().toISOString(),
@@ -54,60 +76,103 @@ async function writeProfileToSupabase(userId: string, profile: Profile) {
     { onConflict: "user_id" }
   );
 
-  if (error) {
-    console.error(error);
-    throw error;
+  if (upsertError) {
+    console.error(upsertError);
+    throw upsertError;
   }
 }
 
-async function writeProfileWithService(profile: Profile) {
-  const supabase = createSupabaseServiceClient();
-  const { error } = await supabase.from(TABLE).upsert(
-    {
-      user_id: adminProfileId,
-      data: profile,
-      public: true,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "user_id" }
-  );
-
-  if (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
-export async function loadProfile(userId?: string) {
+export async function loadProfileByUsername(username: string) {
   if (hasSupabaseEnv()) {
-    if (userId) {
-      const profile = await readProfileFromSupabase(userId);
-      if (profile) return profile;
-    }
-    const publicProfile = await readPublicProfileFromSupabase();
-    if (publicProfile) return publicProfile;
+    const record = await readPublicProfileByUsername(username);
+    if (!record) return null;
+    return record.profile;
   }
 
   return readProfile();
 }
 
-export async function saveProfile(profile: Profile, userId?: string) {
-  if (hasSupabaseEnv() && userId) {
-    await writeProfileToSupabase(userId, profile);
-    return profile;
+export async function loadProfileForUser(userId: string) {
+  if (hasSupabaseEnv()) {
+    const record = await readProfileByUser(userId);
+    if (record) return record;
   }
 
-  if (hasServiceEnv()) {
-    await writeProfileWithService(profile);
-    return profile;
-  }
+  const profile = await readProfile();
+  return { username: profile.username ?? "", profile };
+}
 
-  if (hasSupabaseEnv() && !userId) {
-    throw new Error(
-      "Server storage is read-only. Set SUPABASE_SERVICE_ROLE_KEY or sign in."
-    );
+export async function saveProfileForUser(userId: string, profile: Profile) {
+  if (hasSupabaseEnv()) {
+    await writeProfileByUser(userId, profile);
+    return profile;
   }
 
   await writeProfile(profile);
   return profile;
+}
+
+export async function claimUsername(userId: string, username: string) {
+  if (!hasServiceEnv()) {
+    throw new Error("SUPABASE_SERVICE_ROLE_KEY is required for signup.");
+  }
+
+  const supabase = createSupabaseServiceClient();
+  const { data: current } = await supabase
+    .from(TABLE)
+    .select("username")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (current?.username && current.username !== username) {
+    throw new Error("Username already set for this account.");
+  }
+
+  const { data: existing } = await supabase
+    .from(TABLE)
+    .select("username")
+    .eq("username", username)
+    .maybeSingle();
+
+  if (existing?.username) {
+    throw new Error("Username already taken.");
+  }
+
+  const profile = normalizeProfile({
+    ...defaultProfile,
+    username,
+  });
+
+  const { error } = await supabase.from(TABLE).upsert(
+    {
+      user_id: userId,
+      username,
+      data: profile,
+      public: true,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id" }
+  );
+
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+
+  return profile;
+}
+
+export async function isUsernameAvailable(username: string) {
+  if (!hasServiceEnv()) {
+    return false;
+  }
+
+  const supabase = createSupabaseServiceClient();
+  const { data } = await supabase
+    .from(TABLE)
+    .select("username")
+    .eq("username", username)
+    .maybeSingle();
+
+  return !data?.username;
 }

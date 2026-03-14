@@ -1,5 +1,5 @@
 ﻿import { NextResponse } from "next/server";
-import { loadProfile, saveProfile } from "@/lib/profile-store";
+import { loadProfileForUser, saveProfileForUser } from "@/lib/profile-store";
 import { mergeProfileFromResume } from "@/lib/resume";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
@@ -7,29 +7,17 @@ import { hasSupabaseEnv } from "@/lib/supabase/env";
 export const runtime = "nodejs";
 
 const MAX_BYTES = 5 * 1024 * 1024;
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN ?? "";
-
-async function requireUserOrToken(request: Request) {
-  if (ADMIN_TOKEN) {
-    const auth = request.headers.get("authorization");
-    if (auth === `Bearer ${ADMIN_TOKEN}`) {
-      return { userId: undefined };
-    }
-  }
-
-  if (hasSupabaseEnv()) {
-    const supabase = await createSupabaseServerClient();
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) return null;
-    return { userId: data.user.id };
-  }
-
-  return null;
+async function requireUser() {
+  if (!hasSupabaseEnv()) return null;
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.auth.getUser();
+  if (!data.user) return null;
+  return data.user.id;
 }
 
 export async function POST(request: Request) {
-  const auth = await requireUserOrToken(request);
-  if (!auth) {
+  const userId = await requireUser();
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
@@ -66,14 +54,18 @@ export async function POST(request: Request) {
   const parsed = await pdfParse(Buffer.from(arrayBuffer));
   const text = parsed.text?.trim() ?? "";
 
-  const profile = await loadProfile(auth.userId);
+  const record = await loadProfileForUser(userId);
+  const baseProfile = {
+    ...record.profile,
+    username: record.username,
+  };
   const updated = mergeProfileFromResume(text, {
-    ...profile,
+    ...baseProfile,
     resumeText: text,
   });
 
   try {
-    await saveProfile(updated, auth.userId);
+    await saveProfileForUser(userId, updated);
     return NextResponse.json({ text, profile: updated });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Save failed.";

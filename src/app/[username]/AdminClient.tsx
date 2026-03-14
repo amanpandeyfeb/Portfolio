@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type { Profile } from "@/lib/profile";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -20,6 +20,7 @@ const emptyProfile: Profile = {
   projects: [],
   education: [],
   resumeText: "",
+  resumeUrl: "",
 };
 
 function formatSkills(skills: string[]) {
@@ -130,7 +131,12 @@ function parseEducation(value: string): Profile["education"] {
     });
 }
 
-export default function AdminClient() {
+type ProfileResponse = {
+  username: string;
+  profile: Profile;
+};
+
+export default function AdminClient({ username }: { username: string }) {
   const [profile, setProfile] = useState<Profile>(emptyProfile);
   const [skillsText, setSkillsText] = useState("");
   const [experienceText, setExperienceText] = useState("");
@@ -140,8 +146,11 @@ export default function AdminClient() {
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [authStatus, setAuthStatus] = useState<string | null>(null);
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   useEffect(() => {
     if (!hasSupabaseEnv()) {
@@ -165,18 +174,36 @@ export default function AdminClient() {
   }, []);
 
   useEffect(() => {
+    if (!signedIn) {
+      setIsOwner(false);
+      return;
+    }
+
     const load = async () => {
       const response = await fetch("/api/profile", { cache: "no-store" });
-      const data = (await response.json()) as Profile;
-      setProfile(data);
-      setSkillsText(formatSkills(data.skills));
-      setExperienceText(formatExperience(data));
-      setProjectsText(formatProjects(data));
-      setEducationText(formatEducation(data));
+      if (!response.ok) {
+        setIsOwner(false);
+        setProfileLoaded(true);
+        return;
+      }
+      const data = (await response.json()) as ProfileResponse;
+      setProfileLoaded(true);
+
+      if (data.username && data.username !== username) {
+        setIsOwner(false);
+        return;
+      }
+
+      setIsOwner(true);
+      setProfile(data.profile);
+      setSkillsText(formatSkills(data.profile.skills));
+      setExperienceText(formatExperience(data.profile));
+      setProjectsText(formatProjects(data.profile));
+      setEducationText(formatEducation(data.profile));
     };
 
     load();
-  }, []);
+  }, [signedIn, username]);
 
   const resumePreview = useMemo(() => {
     if (!profile.resumeText) {
@@ -192,13 +219,15 @@ export default function AdminClient() {
       setAuthStatus("Supabase is not configured yet.");
       return;
     }
-    setAuthStatus("Sending magic link...");
+    if (!email || !password) {
+      setAuthStatus("Enter both email and password.");
+      return;
+    }
+    setAuthStatus("Signing in...");
     const supabase = createSupabaseBrowserClient();
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/admin`,
-      },
+      password,
     });
 
     if (error) {
@@ -206,19 +235,21 @@ export default function AdminClient() {
       return;
     }
 
-    setAuthStatus("Check your email for the sign-in link.");
+    setAuthStatus("Signed in.");
   };
 
   const handleSignOut = async () => {
     const supabase = createSupabaseBrowserClient();
     await supabase.auth.signOut();
     setSignedIn(false);
+    setIsOwner(false);
   };
 
   const handleSave = async () => {
     setStatus("Saving...");
     const payload: Profile = {
       ...profile,
+      username,
       skills: parseSkills(skillsText),
       experience: parseExperience(experienceText),
       projects: parseProjects(projectsText),
@@ -277,13 +308,16 @@ export default function AdminClient() {
             Admin
           </p>
           <h1 className="display-font text-4xl text-[#1f1b16]">
-            Update your portfolio data
+            Update {username}&apos;s portfolio
           </h1>
           <p className="text-sm text-[#6b5f54]">
             Login is required to edit or upload a resume. Your portfolio page
             stays public.
           </p>
-          <a className="text-sm font-semibold text-[#e9734f]" href="/">
+          <a
+            className="text-sm font-semibold text-[#e9734f]"
+            href={`/${username}`}
+          >
             Back to portfolio
           </a>
         </header>
@@ -302,26 +336,49 @@ export default function AdminClient() {
         ) : !signedIn ? (
           <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
             <div className="rounded-2xl border border-[#f1c7b8] bg-[#fff2ec] p-4 text-sm text-[#8b4f3c]">
-              Not for you. Be an admin.
+              Not for you. Be the owner of this username.
             </div>
-            <div className="mt-4 grid gap-4 md:grid-cols-[1fr_auto]">
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
               <input
                 className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
                 type="email"
-                placeholder="your@email.com"
+                placeholder="you@email.com"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
-              <button
-                className="rounded-full bg-[#2f6b73] px-4 py-2 text-sm font-semibold text-white"
-                onClick={handleSignIn}
-              >
-                Send magic link
-              </button>
+              <input
+                className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
             </div>
+            <button
+              className="mt-4 rounded-full bg-[#2f6b73] px-4 py-2 text-sm font-semibold text-white"
+              onClick={handleSignIn}
+            >
+              Sign in
+            </button>
             {authStatus ? (
               <p className="text-sm text-[#6b5f54]">{authStatus}</p>
             ) : null}
+            <p className="text-xs text-[#6b5f54]">
+              Need an account? Create one at /signup.
+            </p>
+          </section>
+        ) : !isOwner && profileLoaded ? (
+          <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-[#f1c7b8] bg-[#fff2ec] p-4 text-sm text-[#8b4f3c]">
+              You&apos;re signed in, but this username belongs to a different
+              account.
+            </div>
+            <button
+              className="mt-4 rounded-full bg-[#2f6b73] px-4 py-2 text-sm font-semibold text-white"
+              onClick={handleSignOut}
+            >
+              Sign out
+            </button>
           </section>
         ) : (
           <section className="grid gap-4 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
@@ -337,7 +394,7 @@ export default function AdminClient() {
           </section>
         )}
 
-        {signedIn ? (
+        {signedIn && isOwner ? (
           <>
             <section className="grid gap-6 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm md:grid-cols-2">
               <div className="space-y-3">
@@ -372,7 +429,10 @@ export default function AdminClient() {
                   className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
                   value={profile.location}
                   onChange={(event) =>
-                    setProfile((prev) => ({ ...prev, location: event.target.value }))
+                    setProfile((prev) => ({
+                      ...prev,
+                      location: event.target.value,
+                    }))
                   }
                 />
               </div>
@@ -408,7 +468,10 @@ export default function AdminClient() {
                   className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
                   value={profile.website}
                   onChange={(event) =>
-                    setProfile((prev) => ({ ...prev, website: event.target.value }))
+                    setProfile((prev) => ({
+                      ...prev,
+                      website: event.target.value,
+                    }))
                   }
                 />
               </div>
@@ -437,6 +500,22 @@ export default function AdminClient() {
                       linkedin: event.target.value,
                     }))
                   }
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  Resume URL
+                </label>
+                <input
+                  className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  value={profile.resumeUrl ?? ""}
+                  onChange={(event) =>
+                    setProfile((prev) => ({
+                      ...prev,
+                      resumeUrl: event.target.value,
+                    }))
+                  }
+                  placeholder="https://..."
                 />
               </div>
               <div className="space-y-3 md:col-span-2">
@@ -520,7 +599,9 @@ export default function AdminClient() {
                   type="file"
                   accept="application/pdf"
                   onChange={(event) =>
-                    setResumeFile(event.target.files ? event.target.files[0] : null)
+                    setResumeFile(
+                      event.target.files ? event.target.files[0] : null
+                    )
                   }
                 />
               </div>

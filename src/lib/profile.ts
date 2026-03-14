@@ -23,6 +23,7 @@ export type EducationItem = {
 };
 
 export type Profile = {
+  username?: string;
   name: string;
   role: string;
   location: string;
@@ -37,11 +38,13 @@ export type Profile = {
   projects: ProjectItem[];
   education: EducationItem[];
   resumeText: string;
+  resumeUrl?: string;
 };
 
 const dataPath = path.join(process.cwd(), "data", "profile.json");
 
-const defaultProfile: Profile = {
+export const defaultProfile: Profile = {
+  username: "amanpandey",
   name: "Your Name",
   role: "Full-Stack Developer",
   location: "Your City, Country",
@@ -102,6 +105,8 @@ export function normalizeProfile(input: Partial<Profile>): Profile {
     github: typeof input.github === "string" ? input.github : defaultProfile.github,
     linkedin:
       typeof input.linkedin === "string" ? input.linkedin : defaultProfile.linkedin,
+    username: typeof input.username === "string" ? input.username : defaultProfile.username,
+    resumeUrl: typeof input.resumeUrl === "string" ? input.resumeUrl : undefined,
   };
 }
 
