@@ -99,7 +99,7 @@ export async function loadProfileForUser(userId: string) {
   }
 
   const profile = await readProfile();
-  return { username: profile.username ?? "", profile };
+  return { username: "", profile: { ...profile, username: "" } };
 }
 
 export async function saveProfileForUser(userId: string, profile: Profile) {

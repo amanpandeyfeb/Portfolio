@@ -197,6 +197,31 @@ export default function AdminClient({ username }: { username: string }) {
       setProfileLoaded(true);
       setOwnUsername(data.username ?? null);
 
+      if (!data.username) {
+        const claim = await fetch("/api/profile/claim", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username }),
+        });
+
+        if (!claim.ok) {
+          const err = (await claim.json()) as { error?: string };
+          setAuthStatus(err.error ?? "Could not claim username.");
+          setIsOwner(false);
+          return;
+        }
+
+        setOwnUsername(username);
+        setIsOwner(true);
+        setUsernameMismatch(false);
+        setProfile({ ...data.profile, username });
+        setSkillsText(formatSkills(data.profile.skills));
+        setExperienceText(formatExperience(data.profile));
+        setProjectsText(formatProjects(data.profile));
+        setEducationText(formatEducation(data.profile));
+        return;
+      }
+
       if (data.username && data.username !== username) {
         setIsOwner(false);
         setUsernameMismatch(true);
