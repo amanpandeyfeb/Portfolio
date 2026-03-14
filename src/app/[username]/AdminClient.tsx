@@ -4,6 +4,9 @@ import type { Profile } from "@/lib/profile";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { themeOptions } from "@/lib/themes";
+import { Card } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
 import { useEffect, useMemo, useState } from "react";
 
 const emptyProfile: Profile = {
@@ -398,7 +401,67 @@ export default function AdminClient({ username }: { username: string }) {
 
         {signedIn && isOwner ? (
           <>
-            <section className="grid gap-6 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm md:grid-cols-2">
+            <Card className="space-y-4">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h2 className="display-font text-2xl text-[#1f1b16]">
+                    Theme gallery
+                  </h2>
+                  <p className="text-sm text-[#6b5f54]">
+                    Pick a layout skin. It instantly updates your public profile.
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open(`/${username}`, "_blank")}
+                >
+                  Preview live
+                </Button>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                {themeOptions.map((theme) => (
+                  <div
+                    key={`${theme.id}-gallery`}
+                    className={`rounded-2xl border p-4 ${
+                      (profile.theme ?? "sand") === theme.id
+                        ? "border-[#2f6b73] bg-[#f3f7f8]"
+                        : "border-[#eadfce] bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-semibold text-[#1f1b16]">
+                          {theme.label}
+                        </p>
+                        <p className="text-xs text-[#6b5f54]">
+                          {theme.description}
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setProfile((prev) => ({ ...prev, theme: theme.id }))
+                        }
+                      >
+                        Select
+                      </Button>
+                    </div>
+                    <div className="mt-3 grid grid-cols-4 gap-2">
+                      {theme.swatches.map((color) => (
+                        <span
+                          key={`${theme.id}-${color}`}
+                          className="h-6 w-full rounded-lg border border-[#eadfce]"
+                          style={{ backgroundColor: color }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+            <Card className="md:grid md:grid-cols-2 md:gap-6">
               <div className="space-y-3">
                 <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
                   Name
@@ -539,22 +602,20 @@ export default function AdminClient({ username }: { username: string }) {
                 <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
                   Theme
                 </label>
-                <div className="grid gap-4 md:grid-cols-2">
-                  {themeOptions.map((theme) => {
-                    const isSelected = (profile.theme ?? "sand") === theme.id;
-                    return (
-                      <button
-                        key={theme.id}
-                        type="button"
-                        onClick={() =>
-                          setProfile((prev) => ({ ...prev, theme: theme.id }))
-                        }
-                        className={`rounded-2xl border px-4 py-4 text-left text-sm transition ${
-                          isSelected
-                            ? "border-[#2f6b73] bg-[#f3f7f8]"
-                            : "border-[#eadfce] bg-white"
-                        }`}
-                      >
+                <RadioGroup
+                  value={profile.theme ?? "sand"}
+                  onValueChange={(value) =>
+                    setProfile((prev) => ({ ...prev, theme: value }))
+                  }
+                  className="grid gap-4 md:grid-cols-2"
+                >
+                  {themeOptions.map((theme) => (
+                    <label
+                      key={theme.id}
+                      className="flex cursor-pointer gap-3 rounded-2xl border border-[#eadfce] bg-white p-4 text-left text-sm transition hover:border-[#2f6b73]"
+                    >
+                      <RadioGroupItem value={theme.id} />
+                      <div className="flex-1 space-y-2">
                         <div className="flex items-center justify-between gap-4">
                           <div>
                             <p className="text-sm font-semibold text-[#1f1b16]">
@@ -564,15 +625,8 @@ export default function AdminClient({ username }: { username: string }) {
                               {theme.description}
                             </p>
                           </div>
-                          <span
-                            className={`text-xs font-semibold ${
-                              isSelected ? "text-[#2f6b73]" : "text-[#6b5f54]"
-                            }`}
-                          >
-                            {isSelected ? "Selected" : "Preview"}
-                          </span>
                         </div>
-                        <div className="mt-3 flex gap-2">
+                        <div className="flex gap-2">
                           {theme.swatches.map((color) => (
                             <span
                               key={color}
@@ -581,14 +635,14 @@ export default function AdminClient({ username }: { username: string }) {
                             />
                           ))}
                         </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                      </div>
+                    </label>
+                  ))}
+                </RadioGroup>
               </div>
-            </section>
+            </Card>
 
-            <section className="grid gap-6 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
+            <Card className="grid gap-6">
               <div className="space-y-3">
                 <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
                   Skills (comma separated)
@@ -630,19 +684,19 @@ export default function AdminClient({ username }: { username: string }) {
                 />
               </div>
               <div className="flex items-center gap-4">
-                <button
-                  className="rounded-full bg-[#2f6b73] px-5 py-2 text-sm font-semibold text-white"
+                <Button
+                  className="bg-[#2f6b73]"
                   onClick={handleSave}
                 >
                   Save portfolio data
-                </button>
+                </Button>
                 {status ? (
                   <span className="text-sm text-[#6b5f54]">{status}</span>
                 ) : null}
               </div>
-            </section>
+            </Card>
 
-            <section className="grid gap-6 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
+            <Card className="grid gap-6">
               <div className="space-y-3">
                 <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
                   Upload resume (PDF)
@@ -658,19 +712,19 @@ export default function AdminClient({ username }: { username: string }) {
                   }
                 />
               </div>
-              <button
-                className="rounded-full bg-[#e9734f] px-5 py-2 text-sm font-semibold text-white"
+              <Button
+                className="bg-[#e9734f]"
                 onClick={handleUpload}
               >
                 Scan resume
-              </button>
+              </Button>
               {uploadStatus ? (
                 <p className="text-sm text-[#6b5f54]">{uploadStatus}</p>
               ) : null}
               <div className="rounded-2xl border border-[#efe2d0] bg-[#fffaf3] p-4 text-sm text-[#6b5f54]">
                 {resumePreview}
               </div>
-            </section>
+            </Card>
           </>
         ) : null}
       </main>
