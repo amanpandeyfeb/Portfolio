@@ -158,6 +158,15 @@ export default function AdminClient({ username }: { username: string }) {
   const [profileLoaded, setProfileLoaded] = useState(false);
   const [ownUsername, setOwnUsername] = useState<string | null>(null);
   const [usernameMismatch, setUsernameMismatch] = useState(false);
+  const resolvedUsername = useMemo(() => {
+    const trimmed = username.trim();
+    if (trimmed) return trimmed;
+    if (typeof window !== "undefined") {
+      const parts = window.location.pathname.split("/").filter(Boolean);
+      return parts[0] ?? "";
+    }
+    return "";
+  }, [username]);
 
   useEffect(() => {
     if (!hasSupabaseEnv()) {
@@ -187,7 +196,7 @@ export default function AdminClient({ username }: { username: string }) {
     }
 
     const load = async () => {
-      if (!username.trim()) {
+      if (!resolvedUsername.trim()) {
         setAuthStatus("Username missing in URL. Open /yourusername/admin.");
         setIsOwner(false);
         setProfileLoaded(true);
@@ -204,11 +213,11 @@ export default function AdminClient({ username }: { username: string }) {
       setProfileLoaded(true);
       setOwnUsername(data.username ?? null);
 
-      if (!data.username && username.trim()) {
+      if (!data.username && resolvedUsername.trim()) {
         const claim = await fetch("/api/profile/claim", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username }),
+          body: JSON.stringify({ username: resolvedUsername }),
         });
 
         if (!claim.ok) {
@@ -218,10 +227,10 @@ export default function AdminClient({ username }: { username: string }) {
           return;
         }
 
-        setOwnUsername(username);
+        setOwnUsername(resolvedUsername);
         setIsOwner(true);
         setUsernameMismatch(false);
-        setProfile({ ...data.profile, username });
+        setProfile({ ...data.profile, username: resolvedUsername });
         setSkillsText(formatSkills(data.profile.skills));
         setExperienceText(formatExperience(data.profile));
         setProjectsText(formatProjects(data.profile));
@@ -229,7 +238,7 @@ export default function AdminClient({ username }: { username: string }) {
         return;
       }
 
-      if (data.username && data.username !== username) {
+      if (data.username && data.username !== resolvedUsername) {
         setIsOwner(false);
         setUsernameMismatch(true);
         setAuthStatus(
@@ -248,7 +257,7 @@ export default function AdminClient({ username }: { username: string }) {
     };
 
     load();
-  }, [signedIn, username]);
+  }, [signedIn, resolvedUsername]);
 
   const resumePreview = useMemo(() => {
     if (!profile.resumeText) {
@@ -294,7 +303,7 @@ export default function AdminClient({ username }: { username: string }) {
     setStatus("Saving...");
     const payload: Profile = {
       ...profile,
-      username,
+      username: resolvedUsername,
       skills: parseSkills(skillsText),
       experience: parseExperience(experienceText),
       projects: parseProjects(projectsText),
@@ -353,8 +362,8 @@ export default function AdminClient({ username }: { username: string }) {
             Admin
           </p>
           <h1 className="display-font text-4xl text-[#1f1b16]">
-            {username.trim()
-              ? `Update ${username}'s portfolio`
+            {resolvedUsername.trim()
+              ? `Update ${resolvedUsername}'s portfolio`
               : "Update your portfolio"}
           </h1>
           <p className="text-sm text-[#6b5f54]">
@@ -363,7 +372,7 @@ export default function AdminClient({ username }: { username: string }) {
           </p>
           <a
             className="text-sm font-semibold text-[#e9734f]"
-            href={`/${username}`}
+            href={`/${resolvedUsername}`}
           >
             Back to portfolio
           </a>
@@ -380,7 +389,7 @@ export default function AdminClient({ username }: { username: string }) {
           <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
             <p className="text-sm text-[#6b5f54]">Checking login...</p>
           </section>
-        ) : !username.trim() ? (
+        ) : !resolvedUsername.trim() ? (
           <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
             <div className="rounded-2xl border border-[#f1c7b8] bg-[#fff2ec] p-4 text-sm text-[#8b4f3c]">
               Username missing in URL. Open your admin page like
@@ -432,7 +441,8 @@ export default function AdminClient({ username }: { username: string }) {
           <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
             <div className="rounded-2xl border border-[#f1c7b8] bg-[#fff2ec] p-4 text-sm text-[#8b4f3c]">
               You&apos;re signed in, but this username belongs to a different
-              account. Please sign in with the correct email for {username}.
+              account. Please sign in with the correct email for{" "}
+              {resolvedUsername}.
             </div>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               {ownUsername ? (
@@ -468,7 +478,9 @@ export default function AdminClient({ username }: { username: string }) {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => window.open(`/${username}`, "_blank")}
+                  onClick={() =>
+                    window.open(`/${resolvedUsername}`, "_blank")
+                  }
                 >
                   Preview live
                 </Button>
