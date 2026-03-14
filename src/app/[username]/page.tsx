@@ -111,10 +111,13 @@ export default function ProfilePage() {
     : "Upload your resume to generate a text snapshot here.";
 
   return (
-    <div
-      className={`min-h-screen portfolio-surface theme-${resolveTheme(profile.theme)}`}
-    >
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 py-16">
+    <div className={`min-h-screen portfolio-surface theme-${resolveTheme(profile.theme)} overflow-hidden`}>
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 py-16 relative z-10">
+        <div className="fixed inset-0 pointer-events-none z-0 opacity-20">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-[color:var(--accent)] rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-0"></div>
+          <div className="absolute top-40 right-40 w-72 h-72 bg-[color:var(--accent-2)] rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-40 w-72 h-72 bg-[color:var(--accent)] rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+        </div>
         <header className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-6">
             <p className="text-sm uppercase tracking-[0.3em] text-[color:var(--muted)]">
@@ -170,7 +173,7 @@ export default function ProfilePage() {
                 ) : null}
               </div>
           </div>
-          <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--card)] p-6 shadow-sm">
+          <div className="card-hover rounded-3xl border border-[color:var(--border)] bg-[color:var(--card)] p-6 shadow-sm">
             <h2 className="display-font text-2xl">Resume Snapshot</h2>
             <p className="mt-4 text-sm leading-relaxed text-[color:var(--muted)]">
               {resumeSnippet}
@@ -198,7 +201,7 @@ export default function ProfilePage() {
         </header>
 
         <section className="grid items-start gap-8 lg:grid-cols-[1fr_1fr]">
-          <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--card)] p-6 shadow-sm">
+          <div className="card-hover rounded-3xl border border-[color:var(--border)] bg-[color:var(--card)] p-6 shadow-sm">
             <h2 className="display-font text-3xl">Skills</h2>
             <div className="mt-4 flex flex-wrap gap-2">
               {profile.skills.map((skill) => (
@@ -211,7 +214,7 @@ export default function ProfilePage() {
               ))}
             </div>
           </div>
-          <div className="self-start rounded-3xl border border-[color:var(--border)] bg-[color:var(--card)] p-6 shadow-sm">
+          <div className="self-start card-hover rounded-3xl border border-[color:var(--border)] bg-[color:var(--card)] p-6 shadow-sm">
             <h2 className="display-font text-3xl">Contact</h2>
             <div className="mt-4 grid gap-2 text-sm text-[color:var(--muted)]">
               <p>{profile.email}</p>
@@ -222,7 +225,7 @@ export default function ProfilePage() {
         </section>
 
         <section className="grid items-start gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--card)] p-6 shadow-sm">
+          <div className="card-hover rounded-3xl border border-[color:var(--border)] bg-[color:var(--card)] p-6 shadow-sm">
             <h2 className="display-font text-3xl">Experience</h2>
             <div className="mt-6 space-y-6">
               {profile.experience.map((item) => (
