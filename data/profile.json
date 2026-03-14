@@ -1,48 +1,73 @@
 ﻿{
   "name": "Aman Pandey",
-  "role": "Full-Stack Developer",
-  "location": "Bangalore",
-  "email": "amanpandeyfeb2000@example.com",
-  "phone": "+1 555 123 4567",
-  "website": "https://your-website.com",
+  "role": "Java Full Stack Developer",
+  "location": "Bangalore, India",
+  "email": "amanpandeyfeb2000@gmail.com",
+  "phone": "+91 9667911138",
+  "website": "",
   "github": "https://github.com/amanpandeyfeb",
-  "summary": "Short intro about your work, what you love building, and the impact you aim for.",
+  "summary": "High-performing Java Full Stack Developer with 4.5+ years of experience in SDLC, Agile, and building scalable web applications. Strong in Java, Spring Boot, React, AWS, and database design.",
   "skills": [
+    "Java 8/17",
+    "JavaScript",
+    "Python",
+    "Spring Boot",
+    "Spring MVC",
+    "Spring Security",
+    "JPA",
+    "JDBC",
+    "REST APIs",
     "React",
-    "Next.js",
-    "TypeScript",
-    "Node.js",
-    "PostgreSQL"
+    "Redux",
+    "HTML",
+    "CSS",
+    "JWT",
+    "AWS (Lambda, EC2, S3, API Gateway, RDS)",
+    "PostgreSQL",
+    "MySQL",
+    "DynamoDB",
+    "Git",
+    "GitLab",
+    "Docker",
+    "Jenkins",
+    "Kubernetes",
+    "Maven",
+    "Postman",
+    "Swagger",
+    "Jira"
   ],
   "experience": [
     {
-      "company": "Company A",
-      "title": "Software Engineer",
-      "start": "2023",
+      "company": "John Deere India Pvt Limited",
+      "title": "Senior Software Engineer (Full Stack Developer)",
+      "start": "Feb 2025",
       "end": "Present",
       "bullets": [
-        "Built a scalable dashboard used by 10k+ users",
-        "Led performance improvements that reduced load time by 45%"
+        "Architected and deployed scalable microservices using Java Spring Boot, achieving 99.9% uptime.",
+        "Built and maintained web and mobile applications for inventory verification workflows.",
+        "Implemented OAuth 2.0 authentication and Okta MFA; streamlined API Gateway access.",
+        "Built reusable React components with Material-UI and Redux for dashboards and navigation.",
+        "Designed user-friendly form fields using React Hooks."
       ]
-    }
-  ],
-  "projects": [
+    },
     {
-      "name": "Project One",
-      "link": "https://github.com/yourname/project-one",
-      "description": "A brief description of what the project does and why it matters.",
-      "stack": [
-        "Next.js",
-        "Tailwind",
-        "Supabase"
+      "company": "Cognizant Technology Services India Limited",
+      "title": "Software Engineer / Associate (Backend Developer)",
+      "start": "Sep 2021",
+      "end": "Feb 2025",
+      "bullets": [
+        "Improved advanced search and view tools for Google Play services, reducing latency by 25%.",
+        "Optimized database queries and indexing to reduce API response times by 25%.",
+        "Led process re-engineering to improve end-to-end service workflows."
       ]
     }
   ],
+  "projects": [],
   "education": [
     {
-      "school": "University Name",
-      "degree": "B.S. in Computer Science",
-      "year": "2022"
+      "school": "Visvesvaraya Technological University, Bengaluru, Karnataka, India",
+      "degree": "B.E. in Computer Science & Engineering",
+      "year": "2021"
     }
   ],
   "resumeText": ""

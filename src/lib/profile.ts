@@ -47,7 +47,7 @@ const defaultProfile: Profile = {
   email: "you@example.com",
   phone: "+1 555 123 4567",
   website: "https://your-website.com",
-  github: "",
+  github: "https://github.com/amanpandeyfeb",
   summary:
     "Short intro about your work, what you love building, and the impact you aim for.",
   skills: ["React", "Next.js", "TypeScript", "Node.js", "PostgreSQL"],
