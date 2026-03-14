@@ -764,26 +764,14 @@ export default function AdminClient({ username }: { username: string }) {
 
             <Card className="grid gap-6">
               <div className="space-y-3">
-                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
-                  Upload resume (PDF)
-                </label>
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">Resume URL</label>
                 <input
-                  className="w-full text-sm"
-                  type="file"
-                  accept="application/pdf"
-                  onChange={(event) =>
-                    setResumeFile(
-                      event.target.files ? event.target.files[0] : null
-                    )
-                  }
+                  className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+                  placeholder="https://..."
+                  value={profile.resumeUrl ?? ''}
+                  onChange={(e) => setProfile((prev) => ({ ...prev, resumeUrl: e.target.value }))}
                 />
               </div>
-              <Button
-                className="bg-[#e9734f]"
-                onClick={handleUpload}
-              >
-                Scan resume
-              </Button>
               {uploadStatus ? (
                 <p className="text-sm text-[#6b5f54]">{uploadStatus}</p>
               ) : null}

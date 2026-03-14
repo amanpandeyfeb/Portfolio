@@ -178,17 +178,6 @@ export default function ProfilePage() {
             <div className="mt-6 flex flex-wrap gap-3">
               {profile.resumeUrl ? (
                 <a
-                  className="inline-flex items-center justify-center rounded-full bg-[color:var(--accent)] px-5 py-2 text-sm font-semibold text-white shadow-lg"
-                  href={profile.resumeUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  download
-                >
-                  📥 Download Resume
-                </a>
-              ) : null}
-              {profile.resumeUrl ? (
-                <a
                   className="rounded-full border border-[color:var(--border)] bg-[color:var(--card)] px-4 py-2 font-semibold text-[color:var(--accent)]"
                   href={profile.resumeUrl}
                   target="_blank"
