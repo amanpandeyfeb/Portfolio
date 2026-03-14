@@ -24,6 +24,7 @@ export type EducationItem = {
 
 export type Profile = {
   username?: string;
+  theme?: string;
   name: string;
   role: string;
   location: string;
@@ -45,6 +46,7 @@ const dataPath = path.join(process.cwd(), "data", "profile.json");
 
 export const defaultProfile: Profile = {
   username: "amanpandey",
+  theme: "sand",
   name: "Your Name",
   role: "Full-Stack Developer",
   location: "Your City, Country",
@@ -106,6 +108,7 @@ export function normalizeProfile(input: Partial<Profile>): Profile {
     linkedin:
       typeof input.linkedin === "string" ? input.linkedin : defaultProfile.linkedin,
     username: typeof input.username === "string" ? input.username : defaultProfile.username,
+    theme: typeof input.theme === "string" ? input.theme : defaultProfile.theme,
     resumeUrl: typeof input.resumeUrl === "string" ? input.resumeUrl : undefined,
   };
 }

@@ -2,12 +2,82 @@
 
 :root {
   --background: #f8f2e9;
+  --background-2: #fff4e4;
+  --background-3: #efe2d0;
   --foreground: #1f1b16;
   --accent: #e9734f;
   --accent-2: #2f6b73;
   --card: #ffffff;
+  --card-soft: #fffaf3;
+  --chip: #efe2d0;
   --muted: #6b5f54;
   --border: #eadfce;
+}
+
+.theme-sand {
+  --background: #f8f2e9;
+  --background-2: #fff4e4;
+  --background-3: #efe2d0;
+  --foreground: #1f1b16;
+  --accent: #e9734f;
+  --accent-2: #2f6b73;
+  --card: #ffffff;
+  --card-soft: #fffaf3;
+  --chip: #efe2d0;
+  --muted: #6b5f54;
+  --border: #eadfce;
+}
+
+.theme-ocean {
+  --background: #eef6f9;
+  --background-2: #f7fbff;
+  --background-3: #dfeaf1;
+  --foreground: #0f1c2e;
+  --accent: #1d7aa6;
+  --accent-2: #0f5f6a;
+  --card: #ffffff;
+  --card-soft: #f2f8fb;
+  --chip: #dcecf2;
+  --muted: #3c4a5c;
+  --border: #cfe0ea;
+}
+
+.theme-midnight {
+  --background: #0f1218;
+  --background-2: #1a1f2a;
+  --background-3: #0b0d12;
+  --foreground: #f5f7fb;
+  --accent: #9b5cff;
+  --accent-2: #4fd1c5;
+  --card: #171c26;
+  --card-soft: #1f2634;
+  --chip: #232b3b;
+  --muted: #b2bfd4;
+  --border: #2b3242;
+}
+
+.theme-citrus {
+  --background: #fff7ed;
+  --background-2: #fff1d6;
+  --background-3: #ffe3b3;
+  --foreground: #2a1b12;
+  --accent: #ff7a18;
+  --accent-2: #2f7d5c;
+  --card: #ffffff;
+  --card-soft: #fff8ef;
+  --chip: #ffe1c2;
+  --muted: #70564a;
+  --border: #f3d2b4;
+}
+
+.portfolio-surface {
+  background: radial-gradient(
+    circle at top,
+    var(--background-2),
+    var(--background) 55%,
+    var(--background-3) 100%
+  );
+  color: var(--foreground);
 }
 
 @theme inline {

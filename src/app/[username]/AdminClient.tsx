@@ -23,6 +23,33 @@ const emptyProfile: Profile = {
   resumeUrl: "",
 };
 
+const themes = [
+  {
+    id: "sand",
+    label: "Sandstone",
+    description: "Warm, editorial, calm",
+    swatches: ["#f8f2e9", "#e9734f", "#2f6b73", "#1f1b16"],
+  },
+  {
+    id: "ocean",
+    label: "Oceanic",
+    description: "Clean, coastal, bright",
+    swatches: ["#eef6f9", "#1d7aa6", "#0f5f6a", "#0f1c2e"],
+  },
+  {
+    id: "midnight",
+    label: "Midnight",
+    description: "Dark, bold, modern",
+    swatches: ["#0f1218", "#9b5cff", "#4fd1c5", "#f5f7fb"],
+  },
+  {
+    id: "citrus",
+    label: "Citrus",
+    description: "Playful, energetic",
+    swatches: ["#fff7ed", "#ff7a18", "#2f7d5c", "#2a1b12"],
+  },
+];
+
 function formatSkills(skills: string[]) {
   return skills.join(", ");
 }
@@ -532,6 +559,57 @@ export default function AdminClient({ username }: { username: string }) {
                     }))
                   }
                 />
+              </div>
+              <div className="space-y-3 md:col-span-2">
+                <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+                  Theme
+                </label>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {themes.map((theme) => {
+                    const isSelected = (profile.theme ?? "sand") === theme.id;
+                    return (
+                      <button
+                        key={theme.id}
+                        type="button"
+                        onClick={() =>
+                          setProfile((prev) => ({ ...prev, theme: theme.id }))
+                        }
+                        className={`rounded-2xl border px-4 py-4 text-left text-sm transition ${
+                          isSelected
+                            ? "border-[#2f6b73] bg-[#f3f7f8]"
+                            : "border-[#eadfce] bg-white"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-4">
+                          <div>
+                            <p className="text-sm font-semibold text-[#1f1b16]">
+                              {theme.label}
+                            </p>
+                            <p className="text-xs text-[#6b5f54]">
+                              {theme.description}
+                            </p>
+                          </div>
+                          <span
+                            className={`text-xs font-semibold ${
+                              isSelected ? "text-[#2f6b73]" : "text-[#6b5f54]"
+                            }`}
+                          >
+                            {isSelected ? "Selected" : "Preview"}
+                          </span>
+                        </div>
+                        <div className="mt-3 flex gap-2">
+                          {theme.swatches.map((color) => (
+                            <span
+                              key={color}
+                              className="h-5 w-5 rounded-full border border-[#eadfce]"
+                              style={{ backgroundColor: color }}
+                            />
+                          ))}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </section>
 
