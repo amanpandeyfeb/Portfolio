@@ -1,5 +1,6 @@
 ﻿import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { hasSupabaseEnv } from "@/lib/supabase/env";
+import { adminProfileId, hasServiceEnv, hasSupabaseEnv } from "@/lib/supabase/env";
+import { createSupabaseServiceClient } from "@/lib/supabase/service";
 import { normalizeProfile, readProfile, writeProfile } from "@/lib/profile";
 import type { Profile } from "@/lib/profile";
 
@@ -59,6 +60,24 @@ async function writeProfileToSupabase(userId: string, profile: Profile) {
   }
 }
 
+async function writeProfileWithService(profile: Profile) {
+  const supabase = createSupabaseServiceClient();
+  const { error } = await supabase.from(TABLE).upsert(
+    {
+      user_id: adminProfileId,
+      data: profile,
+      public: true,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id" }
+  );
+
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function loadProfile(userId?: string) {
   if (hasSupabaseEnv()) {
     if (userId) {
@@ -76,6 +95,17 @@ export async function saveProfile(profile: Profile, userId?: string) {
   if (hasSupabaseEnv() && userId) {
     await writeProfileToSupabase(userId, profile);
     return profile;
+  }
+
+  if (hasServiceEnv()) {
+    await writeProfileWithService(profile);
+    return profile;
+  }
+
+  if (hasSupabaseEnv() && !userId) {
+    throw new Error(
+      "Server storage is read-only. Set SUPABASE_SERVICE_ROLE_KEY or sign in."
+    );
   }
 
   await writeProfile(profile);

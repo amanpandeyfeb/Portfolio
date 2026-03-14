@@ -37,6 +37,11 @@ export async function POST(request: Request) {
 
   const body = (await request.json()) as unknown;
   const profile = normalizeProfile(body as Record<string, unknown>);
-  await saveProfile(profile, auth.userId);
-  return NextResponse.json(profile);
+  try {
+    await saveProfile(profile, auth.userId);
+    return NextResponse.json(profile);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Save failed.";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

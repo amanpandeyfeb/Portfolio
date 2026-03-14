@@ -72,7 +72,11 @@ export async function POST(request: Request) {
     resumeText: text,
   });
 
-  await saveProfile(updated, auth.userId);
-
-  return NextResponse.json({ text, profile: updated });
+  try {
+    await saveProfile(updated, auth.userId);
+    return NextResponse.json({ text, profile: updated });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Save failed.";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
