@@ -43,6 +43,16 @@ export default async function Home() {
               >
                 {profile.website}
               </a>
+              {profile.github ? (
+                <a
+                  className="rounded-full border border-[#eadfce] bg-white px-4 py-2"
+                  href={profile.github}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  GitHub
+                </a>
+              ) : null}
             </div>
           </div>
           <div className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
@@ -50,12 +60,21 @@ export default async function Home() {
             <p className="mt-4 text-sm leading-relaxed text-[#6b5f54]">
               {resumeSnippet}
             </p>
-            <a
-              className="mt-6 inline-flex items-center justify-center rounded-full bg-[#e9734f] px-5 py-2 text-sm font-semibold text-white"
-              href="/admin"
-            >
-              Update Resume + Details
-            </a>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                className="inline-flex items-center justify-center rounded-full bg-[#e9734f] px-5 py-2 text-sm font-semibold text-white"
+                href="/resume.pdf"
+                download
+              >
+                Download Resume
+              </a>
+              <a
+                className="inline-flex items-center justify-center rounded-full border border-[#eadfce] px-5 py-2 text-sm font-semibold text-[#1f1b16]"
+                href="/admin"
+              >
+                Update Resume + Details
+              </a>
+            </div>
           </div>
         </header>
 

@@ -12,6 +12,7 @@ const emptyProfile: Profile = {
   email: "",
   phone: "",
   website: "",
+  github: "",
   summary: "",
   skills: [],
   experience: [],
@@ -140,6 +141,10 @@ export default function AdminClient() {
   const [email, setEmail] = useState("");
   const [authStatus, setAuthStatus] = useState<string | null>(null);
   const [signedIn, setSignedIn] = useState(false);
+  const [adminToken, setAdminToken] = useState("");
+
+  const hasAdminToken = adminToken.trim().length > 0;
+  const canEdit = signedIn || hasAdminToken;
 
   useEffect(() => {
     if (!hasSupabaseEnv()) return;
@@ -224,6 +229,7 @@ export default function AdminClient() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: hasAdminToken ? `Bearer ${adminToken}` : "",
       },
       body: JSON.stringify(payload),
     });
@@ -250,6 +256,9 @@ export default function AdminClient() {
 
     const response = await fetch("/api/resume", {
       method: "POST",
+      headers: {
+        Authorization: hasAdminToken ? `Bearer ${adminToken}` : "",
+      },
       body: formData,
     });
 
@@ -286,8 +295,8 @@ export default function AdminClient() {
         {!hasSupabaseEnv() ? (
           <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
             <p className="text-sm text-[#6b5f54]">
-              Supabase is not configured yet. Set the environment variables in
-              <code className="px-1">.env.local</code> and refresh.
+              Supabase is not configured. Use your admin token to unlock the
+              editor.
             </p>
           </section>
         ) : (
@@ -325,6 +334,18 @@ export default function AdminClient() {
           </section>
         )}
 
+        <section className="rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm">
+          <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+            Admin token (from .env.local or Vercel env)
+          </label>
+          <input
+            className="mt-3 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+            type="password"
+            value={adminToken}
+            onChange={(event) => setAdminToken(event.target.value)}
+          />
+        </section>
+
         <section className="grid gap-6 rounded-3xl border border-[#eadfce] bg-white p-6 shadow-sm md:grid-cols-2">
           <div className="space-y-3">
             <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
@@ -336,6 +357,7 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, name: event.target.value }))
               }
+              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -348,6 +370,7 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, role: event.target.value }))
               }
+              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -360,6 +383,7 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, location: event.target.value }))
               }
+              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -372,6 +396,7 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, email: event.target.value }))
               }
+              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -384,6 +409,7 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, phone: event.target.value }))
               }
+              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -396,6 +422,20 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, website: event.target.value }))
               }
+              disabled={!canEdit}
+            />
+          </div>
+          <div className="space-y-3">
+            <label className="text-xs uppercase tracking-[0.2em] text-[#6b5f54]">
+              GitHub
+            </label>
+            <input
+              className="w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
+              value={profile.github}
+              onChange={(event) =>
+                setProfile((prev) => ({ ...prev, github: event.target.value }))
+              }
+              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3 md:col-span-2">
@@ -408,6 +448,7 @@ export default function AdminClient() {
               onChange={(event) =>
                 setProfile((prev) => ({ ...prev, summary: event.target.value }))
               }
+              disabled={!canEdit}
             />
           </div>
         </section>
@@ -421,6 +462,7 @@ export default function AdminClient() {
               className="h-20 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
               value={skillsText}
               onChange={(event) => setSkillsText(event.target.value)}
+              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -431,6 +473,7 @@ export default function AdminClient() {
               className="h-32 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
               value={experienceText}
               onChange={(event) => setExperienceText(event.target.value)}
+              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -441,6 +484,7 @@ export default function AdminClient() {
               className="h-32 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
               value={projectsText}
               onChange={(event) => setProjectsText(event.target.value)}
+              disabled={!canEdit}
             />
           </div>
           <div className="space-y-3">
@@ -451,13 +495,14 @@ export default function AdminClient() {
               className="h-24 w-full rounded-xl border border-[#eadfce] px-4 py-2 text-sm"
               value={educationText}
               onChange={(event) => setEducationText(event.target.value)}
+              disabled={!canEdit}
             />
           </div>
           <div className="flex items-center gap-4">
             <button
               className="rounded-full bg-[#2f6b73] px-5 py-2 text-sm font-semibold text-white"
               onClick={handleSave}
-              disabled={!signedIn}
+              disabled={!canEdit}
             >
               Save portfolio data
             </button>
@@ -477,12 +522,13 @@ export default function AdminClient() {
               onChange={(event) =>
                 setResumeFile(event.target.files ? event.target.files[0] : null)
               }
+              disabled={!canEdit}
             />
           </div>
           <button
             className="rounded-full bg-[#e9734f] px-5 py-2 text-sm font-semibold text-white"
             onClick={handleUpload}
-            disabled={!signedIn}
+            disabled={!canEdit}
           >
             Scan resume
           </button>
